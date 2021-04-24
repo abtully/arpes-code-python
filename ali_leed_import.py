@@ -11,7 +11,7 @@ DEFAULT_RENDERER = 'browser'  # this is a constant of this file
 PATH = r'C:\Users\atully\Code\ARPES Code Python\analysis_data\October_2020\LEED\Spinview'
 
 
-def load_image(filename) -> np.ndarray:  # this function returns a numpy array
+def load_image(filename, path=PATH) -> np.ndarray:  # this function returns a numpy array
     """
     This is to load an image from PATH and convert to numpy array
 
@@ -19,29 +19,34 @@ def load_image(filename) -> np.ndarray:  # this function returns a numpy array
 
     Args:
         filename (str): full name of image in month folder, necessary parameter because no default value
-        folder (str): name of month folder, optional parameter because default value given
+        path (str): global variable for filepath
 
     Returns:
          (np.ndarray) a numpy array, type ndarray
 
     """
-    fp = os.path.join(PATH + filename)  # full path
+    fp = get_filepath(path, filename)  # full path
     img_data = plt.imread(fp)  # take tiff file and converts to numpy array because imported with mpl
     return img_data
 
 
-def show_image(img_data: np.ndarray):
+def get_filepath(path, filename):
+    return os.path.join(path, filename)
+
+
+def show_image(img_data: np.ndarray, show=True):
     """
     Plots numpy array from load_image function on given axes
     Args:
-        ax (plt.Axes): optional axes
         img_data: numpy array (a matrix)
+        show: optional argument to create new figure
 
     Returns: plots the numpy array
 
     """
     fig = go.Figure(go.Image(z=img_data))
-    fig.show(renderer=DEFAULT_RENDERER)
+    if show:
+        fig.show(renderer=DEFAULT_RENDERER)
     return fig
 
 
@@ -63,7 +68,7 @@ def show_image_mpl(img_data, ax=None):
 
 
 if __name__ == '__main__':
-    fn = r'\14_10_20_C60_Au111_1654.tiff'
+    fn = r'14_10_20_C60_Au111_1654.tiff'
 
     # fp = os.path.join(PATH + fn)
     # image = Image.open(fp)

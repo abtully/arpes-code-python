@@ -127,3 +127,7 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# Tim's list
+.idea/
+ali_dash/file_system_store/
