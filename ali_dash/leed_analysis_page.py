@@ -12,6 +12,7 @@ from ali_dash.base_class_overrides import AliMain, AliSidebar, AliPageLayout
 import dash_dashboard.component_defaults as c
 import dash_html_components as html
 import dash_bootstrap_components as dbc
+from dash import no_update
 import dash_core_components as dcc
 from dash_extensions.enrich import MultiplexerTransform  # Dash Extensions has some super useful things!
 
@@ -39,6 +40,7 @@ class Components(PageInteractiveComponents):
         self.ref_table = c.table(id_name='tab-ref', editable=True)
         self.dat_table = c.table(id_name='tab-dat', editable=True)
         self.tog_ref = c.toggle(id_name='tog-ref', label='Reference Image')
+        self.txt_printout = html.P(id='txt-printout')
 
         # main area components
         self.div_example = c.div(id_name='div-example')
@@ -50,38 +52,6 @@ class Components(PageInteractiveComponents):
     def initial_setup(self):
         self.ref_table.columns = [{'name': n, 'id': n} for n in ['x', 'y', 'Intensity', 'n', 'eV', 'a']]
         self.dat_table.columns = [{'name': n, 'id': n} for n in ['x', 'y', 'Intensity', 'n', 'eV', 'a']]
-
-
-# # A reminder that this is helpful for making many callbacks which have similar inputs
-# class CommonCallback(CommonInputCallbacks):
-#     components = Components()  # Only use this for accessing IDs only... DON'T MODIFY
-#
-#     def __init__(self, example):
-#         super().__init__()  # Just here to shut up PyCharm
-#         self.example_value = example
-#         pass
-#
-#     def callback_names_funcs(self):
-#         """
-#         Return a dict of {<name>: <callback_func>}
-#         """
-#         return {
-#             "example": self.example_func,
-#         }
-#
-#     def example_func(self):
-#         """Part of example, can be deleted"""
-#         return self.example_value
-#
-#     @classmethod
-#     def get_inputs(cls) -> List[Tuple[str, str]]:
-#         return [
-#             (cls.components.inp_example.id, 'value'),
-#         ]
-#
-#     @classmethod
-#     def get_states(cls) -> List[Tuple[str, str]]:
-#         return []
 
 
 class LEEDLayout(AliPageLayout):
@@ -164,7 +134,8 @@ class LEEDSidebar(AliSidebar):
             self.components.ref_table,
             c.space(height='10px'),
             html.H5('Data Table'),
-            self.components.dat_table
+            self.components.dat_table,
+            self.components.txt_printout
         ])
         return lyt
 
@@ -174,43 +145,129 @@ class LEEDSidebar(AliSidebar):
                                    (self.components.inp_filename.id, 'value')],
                            func=lambda path, name: get_filepath(path, name))
 
+        # self.make_callback(outputs=(self.components.ref_table.id, 'data'),
+        #                    inputs=(self.components.fig_leed.graph_id, 'clickData'),
+        #                    states=[(self.components.ref_table.id, 'data'),
+        #                            (self.components.tog_ref.id, 'value')],
+        #                    func=ref_table)
+        #
+        # self.make_callback(outputs=(self.components.dat_table.id, 'data'),
+        #                    inputs=(self.components.fig_leed.graph_id, 'clickData'),
+        #                    states=[(self.components.dat_table.id, 'data'),
+        #                            (self.components.tog_ref.id, 'value')],
+        #                    func=dat_table)
+        #
         self.make_callback(outputs=(self.components.ref_table.id, 'data'),
-                           inputs=(self.components.fig_leed.graph_id, 'clickData'),
-                           states=[(self.components.ref_table.id, 'data'),
-                                   (self.components.tog_ref.id, 'value')],
-                           func=ref_table)
+                           inputs=TableCallbacks.get_inputs(),
+                           states=TableCallbacks.get_states(),
+                           func=TableCallbacks.get_callback_func('ref_table'))
 
         self.make_callback(outputs=(self.components.dat_table.id, 'data'),
-                           inputs=(self.components.fig_leed.graph_id, 'clickData'),
-                           states=[(self.components.dat_table.id, 'data'),
-                                   (self.components.tog_ref.id, 'value')],
-                           func=dat_table)
+                           inputs=TableCallbacks.get_inputs(),
+                           states=TableCallbacks.get_states(),
+                           func=TableCallbacks.get_callback_func('dat_table'))
+
+        self.make_callback(outputs=(self.components.txt_printout.id, 'children'),
+                           inputs=TableCallbacks.get_inputs(),
+                           states=TableCallbacks.get_states(),
+                           func=TableCallbacks.get_callback_func('table_printout'))
 
 
-def ref_table(clickData, data, value):
-    if value == [1]:
-        return click_to_table(clickData, data)
-    else:
-        raise ValueError(f'Value {value} is not 1')
+# def ref_table(clickData, data, value):
+#     if value == [1]:
+#         return click_to_table(clickData, data)
+#     else:
+#         raise ValueError(f'Value {value} is not 1')
+#
+#
+# def dat_table(clickData, data, value):
+#     if not value:
+#         return click_to_table(clickData, data)
+#     else:
+#         raise ValueError(f'Value {value} is not None')
+#
+#
+# def click_to_table(clickData, data):
+#     if clickData:
+#         x, y = clickData['points'][0]['x'], clickData['points'][0]['y']
+#         df_coords = []
+#         I, n, eV, a = 0, 1, 0, 0
+#         if data:
+#             df_coords = [[d['x'], d['y'], d['Intensity'], d['n'], d['eV'], d['a']] for d in data][-1:]
+#             I, n, eV, a = data[-1]['Intensity'], data[-1]['n'], data[-1]['eV'], data[-1]['a']
+#         df = pd.DataFrame([*df_coords, [x, y, I, n, eV, a]],
+#                           columns=['x', 'y', 'Intensity', 'n', 'eV', 'a'])  # * means unpack outer list
+#         return df.to_dict('records')
 
 
-def dat_table(clickData, data, value):
-    if not value:
-        return click_to_table(clickData, data)
-    else:
-        raise ValueError(f'Value {value} is not None')
+class TableCallbacks(CommonInputCallbacks):
+    components = Components()
 
+    def __init__(self, clickData, ref_data, dat_data, tog_value):
+        super().__init__()
+        self.clickData = clickData
+        self.ref_data = ref_data
+        self.dat_data = dat_data
+        self.tog_value = True if tog_value == [1] else False
 
-def click_to_table(clickData, data):
-    if clickData:
-        x, y = clickData['points'][0]['x'], clickData['points'][0]['y']
-        df_coords = []
-        I, n, eV, a = 0, 1, 0, 0
-        if data:
-            df_coords = [[d['x'], d['y'], d['Intensity'], d['n'], d['eV'], d['a']] for d in data][-1:]
-            I, n, eV, a = data[-1]['Intensity'], data[-1]['n'], data[-1]['eV'], data[-1]['a']
-        df = pd.DataFrame([*df_coords, [x, y, I, n, eV, a]], columns=['x', 'y', 'Intensity', 'n', 'eV', 'a'])  # * means unpack outer list
-        return df.to_dict('records')
+    @classmethod
+    def get_inputs(cls) -> List[Tuple[str, str]]:
+        return [
+            (cls.components.fig_leed.graph_id, 'clickData')
+        ]
+
+    @classmethod
+    def get_states(cls) -> List[Tuple[str, str]]:
+        return [(cls.components.ref_table.id, 'data'),
+                (cls.components.dat_table.id, 'data'),
+                (cls.components.tog_ref.id, 'value')]
+
+    def callback_names_funcs(self) -> Dict[str, Callable]:
+        return {
+            'ref_table': self.ref_table,
+            'dat_table': self.dat_table,
+            'get_distance': self.get_distance,
+            'table_printout': self.table_printout
+        }
+
+    def ref_table(self):
+        if self.tog_value is True:
+            return self.click_to_table(self.ref_data)
+        else:
+            return no_update
+
+    def dat_table(self):
+        if self.tog_value is False:
+            return self.click_to_table(self.dat_data)
+        else:
+            return no_update
+
+    def click_to_table(self, data):
+        if self.clickData:
+            x, y = self.clickData['points'][0]['x'], self.clickData['points'][0]['y']
+            df_coords = []
+            I, n, eV, a = 0, 1, 0, 0
+            if data:
+                df_coords = [[d['x'], d['y'], d['Intensity'], d['n'], d['eV'], d['a']] for d in data][-1:]
+                I, n, eV, a = data[-1]['Intensity'], data[-1]['n'], data[-1]['eV'], data[-1]['a']
+            df = pd.DataFrame([*df_coords, [x, y, I, n, eV, a]],
+                              columns=['x', 'y', 'Intensity', 'n', 'eV', 'a'])  # * means unpack outer list
+            return df.to_dict('records')
+
+    def get_distance(self, data):
+        if data is not None:
+
+            x = [d['x'] for d in data][-1:][0]
+            y = [d['y'] for d in data][-1:][0]
+            return [d['x'] for d in data]
+
+    def table_printout(self, variable=None):
+        data = self.click_to_table(self.ref_data)
+        var = self.get_distance(data)
+        return f'{var}'
+
+    # def table_printout(self):
+    #     return f'{self.ref_data}'
 
 
 class LeedFigureCallbacks(CommonInputCallbacks):  # useful for figure that uses a bunch of the same inputs
