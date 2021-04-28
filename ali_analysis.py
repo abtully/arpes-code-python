@@ -4,6 +4,8 @@ from ali_functions import bin_data_with_axes
 from ali_analysis_functions import get_data_region, get_vertical_slice, get_averaged_slice
 import numpy as np
 import plotly.graph_objects as go
+import os
+from scipy.ndimage import gaussian_filter
 
 
 if __name__ == '__main__':
@@ -11,7 +13,9 @@ if __name__ == '__main__':
     """Gaussian Mask, 2nd Derivative, and Analysis of HOMO (lmfit)"""
     """"""
     # load data
-    d = Data2D.single_load(month='January', year='2021', filename='OMBE_Lamp_2D0001_.ibw')
+    # d = Data2D.single_load(month='January', year='2021', filename='OMBE_Lamp_2D0001_.ibw')
+    path = os.path.abspath('/Users/alexandratully/Desktop/ARPES Data/')
+    d = Data2D.single_load(month='April', year='2021', light_source='XUV', filepath=path, filename='OMBE_XUV_2D0003_.ibw')
     # data, x, y = fourier_2d(d.data, d.xaxis, d.yaxis)
 
     # apply mask using scipy's built in gaussian filter

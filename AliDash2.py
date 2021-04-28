@@ -17,8 +17,8 @@ from ali_k_correction import fix_EkatEF, kcorrect2D, kcorrect3D, kcorrect_phimot
 from ali_polygons import gen_polygon, gen_tiled_hexagons, plot_polygon, plot_polygons
 
 """Filepath Definition (Desktop and Macbook)"""
-PATH = 'C:/Users/atully/Code/ARPES Code Python/analysis_data/'
-# PATH = os.path.abspath('/Users/alexandratully/Desktop/ARPES Code Python/data/')
+# PATH = 'C:/Users/atully/Code/ARPES Code Python/analysis_data/'
+PATH = os.path.abspath('/Users/alexandratully/Desktop/ARPES Data/')
 
 
 """Dash App Begins"""
@@ -240,7 +240,7 @@ app_layout = html.Div(
     [
         dbc.Row(top_bar),
         dbc.Row([
-            dbc.Col(main_area, width=4), dbc.Col(side_bar, width=4), dbc.Col(side_bar_2, width=4)
+            dbc.Col(main_area, width=6), dbc.Col(side_bar, width=4), dbc.Col(side_bar_2, width=2)
             # Dash app width = 12 total
         ])
     ], style={'width': '90vw', 'margin': 'auto'}
@@ -296,8 +296,9 @@ def get_figure(clicks, slice_val, slice_line, bin_x, bin_y, kcorrect, theta0, ph
     alpha = sanitize(alpha, 'float', default_val=0)
     hex_radius = sanitize(hex_radius, 'float', default_val=0)
     hex_rotation = sanitize(hex_rotation, 'float', default_val=0)
+    E_f = sanitize(E_f, 'float', default_val=16.8)
     if type(hex_center) == str:
-        hex_center = sanitize(hex_center, 'csv-to-valuelist')
+        hex_center = sanitize(hex_center, 'csv-to-valuelist', default_val=0)
     if not scan_num:
         scan_num = 1
     if all([year, month, colorscale, scan_dim, scan_num, scan_type, cryo_temp]):
@@ -507,6 +508,7 @@ def toggle_ef_active(scan_dim):
 )
 def get_slice_values(clicks, E_f, month, year, scan_dim, scan_num, scan_type,
                      slice_dim, cryo_temp, laser, filename):
+    E_f = sanitize(E_f, 'float', default_val=16.8)
     if not E_f:
         E_f = 16.8
     if not scan_num:
@@ -523,8 +525,8 @@ def get_slice_values(clicks, E_f, month, year, scan_dim, scan_num, scan_type,
         if scan_dim and scan_dim == '3D':
             try:
                 if scan_type == 'deflector_scan':
-                    data = Data3D.single_load(month, year=year, cryo_temp=cryo_temp, scan_type=scan_type,
-                                              scan_number=scan_num, filepath=PATH)
+                    data = Data3D.single_load(month, year=year, cryo_temp=cryo_temp, light_source=laser,
+                                              scan_type=scan_type, scan_number=scan_num, filepath=PATH)
                     x, y, z = data.xaxis, data.yaxis, data.zaxis
                 elif scan_type == 'phi_motor_scan':
                     fp = os.path.join(PATH, f'{month}_{year}', cryo_temp, laser, '3D', scan_type)

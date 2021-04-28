@@ -227,7 +227,7 @@ def sanitize(value, target_type, default_val):
 
 
 if __name__ == '__main__':
-    data = np.random.random((10, 10))
+    # data = np.random.random((10, 10))
     # # data2 = np.random.random((3, 3)) * 2
     # x = np.linspace(0, 1, 10)
     # E_f = 16.8
@@ -243,3 +243,18 @@ if __name__ == '__main__':
     # fig = go.Figure()
 
     # plot2D(HS.yaxis, HS.xaxis - E_f, HS.data, opacity=0.5, xlabel='Theta', ylabel='E-E_F')
+
+    import os
+    from ali_classes import Data3D
+    from ali_plotting_functions import plot3D
+    path = os.path.abspath('/Users/alexandratully/Desktop/ARPES Data/')
+
+    data = Data3D.single_load(month='April', year='2021', light_source='XUV', cryo_temp='LT',
+                              scan_type='deflector_scan', scan_number=1,
+                              filepath=path)
+    x, y, z, d = data.xaxis, data.yaxis, data.zaxis, data.data
+    slice_val = -1.6
+    E_f = 18.2
+    fig = plot3D(y, x, z, data=np.moveaxis(d, 2, 1),
+                 slice_dim='z', slice_val=slice_val + E_f, int_range=0.02, show=True,
+                 colorscale='Plasma', xlabel='Theta (Deg)', ylabel='Phi (Deg)')
