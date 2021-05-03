@@ -124,6 +124,14 @@ def filepath_plot3D(filepath: str, month, year=2020, laser='lamp', cryo_temp='RT
                   slice_val=slice_val, int_range=int_range, show=False, colorscale=colorscale)
 
 
+def mutliplot3D(x: np.ndarray, y: np.ndarray, z: np.ndarray, data: np.ndarray, slice_dim: str, slice_val: float,
+           int_range: float = 0, show=True, opacity=None, xlabel=None, ylabel=None, title=None, xrange: tuple = None,
+           yrange: tuple = None, dark_mode=False, colorscale='Plasma'):
+
+    hm = heatmap3D(x=x, y=y, z=z, data=data, slice_dim=slice_dim, slice_val=slice_val, int_range=int_range, show=show,
+                   opacity=opacity)
+
+
 if __name__ == '__main__':
     from ali_classes import Data3D, Data2D
 

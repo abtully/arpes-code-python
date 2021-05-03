@@ -191,7 +191,7 @@ def kcorrect_phimotor(fp=None, fn=None, data=None, ss=None, cs=None, p=None, sli
         slice_dim: dimension of slice through data cube (typically y = energy for CE plot)
         EF: Fermi Energy (typically ~16.8 for C60 on gold)
         num (int): the xaxis index at which energy the slice is taken
-        val (float): energy at which the slice is taken, overrides num
+        val (float): energy at which the slice is taken, overrides num, (binding energy!!!)
         Eint_n (int): number of slices to average over
         Eint (float): energy range to average over, overrides Eint_n
         theta_m: offset angle for Berend's kfromangles function
