@@ -17,8 +17,8 @@ from ali_k_correction import fix_EkatEF, kcorrect2D, kcorrect3D, kcorrect_phimot
 from ali_polygons import gen_polygon, gen_tiled_hexagons, plot_polygon, plot_polygons
 
 """Filepath Definition (Desktop and Macbook)"""
-# PATH = 'C:/Users/atully/Code/ARPES Code Python/analysis_data/'
-PATH = os.path.abspath('/Users/alexandratully/Desktop/ARPES Data/')
+PATH = 'C:/Users/atully/Code/ARPES Code Python/analysis_data/'
+# PATH = os.path.abspath('/Users/alexandratully/Desktop/ARPES Data/')
 
 
 """Dash App Begins"""

@@ -19,7 +19,7 @@ def fix_EkatEF(self, EF):  # 16.8 is the EF for Au(111) with He lamp
 
 def kcorrect2D(self, kmode='edep'):
     """applies Berend's k-correction to data, so that Ali's plotting functions can be used; see kplot2D funciton in
-    Berend's plotters.py file for original function.
+    Berend's plotters.py file for original function. Takes a class.
 
 
 
@@ -71,6 +71,39 @@ def kcorrect2D(self, kmode='edep'):
 
         Emesh -= Aa2D.p['EkatEF']
         return kmesh[0, :], Emesh[:, 0], self.data
+
+
+def kcorrect2D_general(data, xaxis, yaxis, EF=16.8, theta_m: float = 0, phi_m: float = 0, theta0: float = 0,
+                       phi0: float = 0, alpha0: float = 0):
+    """More general version of Berend's k-correction function for 2D data.
+    Args:
+        kmode (string): 'edep' (dependent on energy) or 'simple' (taken at 0 energy).
+                    Always use 'edep' in normal operation
+    Returns:
+        kmesh[0, :]: xaxis for kcorrected data
+        Emesh[:, 0]: yaxis for kcorrected data (Ek not binding energy)
+        self.data: dataset
+
+    """
+    thmesh, Emesh = np.meshgrid(xaxis, yaxis + EF)
+    kx, ky = kfromangles(thmesh, 0., Emesh, theta_m=theta_m, phi_m=phi_m, theta0=theta0, phi0=phi0, alpha0=alpha0)
+                        # phi is set to zero, because manipulator offset is already captured by phi_m
+    dkx = np.zeros_like(kx).astype('float64')  # this is to prevent a bug in np that raises an error taking the
+    # sqrt of 0
+    dky = np.zeros_like(ky).astype('float64')
+    dkx[:, 1:] = kx[:, 1:] - kx[:, :-1]
+    dky[:, 1:] = ky[:, 1:] - ky[:, :-1]
+
+    dk = np.sqrt(dkx * dkx + dky * dky)
+    kmesh = np.cumsum(dk, axis=1)
+
+    argzero = np.argmin(np.sqrt(kx ** 2 + ky ** 2), axis=1)
+
+    for i in range(kmesh.shape[0]):
+        kmesh[i] -= kmesh[i, argzero[i]]
+
+    Emesh -= EF
+    return kmesh[0, :], Emesh[:, 0], data
 
 
 def get2Dslice(x: np.ndarray, y: np.ndarray, z: np.ndarray, data: np.ndarray, slice_dim: str, slice_val: float,
@@ -194,11 +227,11 @@ def kcorrect_phimotor(fp=None, fn=None, data=None, ss=None, cs=None, p=None, sli
         val (float): energy at which the slice is taken, overrides num, (binding energy!!!)
         Eint_n (int): number of slices to average over
         Eint (float): energy range to average over, overrides Eint_n
-        theta_m: offset angle for Berend's kfromangles function
-        phi_m: offset angle for Berend's kfromangles function
-        theta0: offset angle for Berend's kfromangles function
-        phi0: offset angle for Berend's kfromangles function
-        alpha0: offset angle for Berend's kfromangles function
+        theta_m: offset angle for manipulator (see Berend's kfromangles function)
+        phi_m: offset angle for manipulator (see Berend's kfromangles function)
+        theta0: offset angle for sample (see Berend's kfromangles function)
+        phi0: offset angle for sample (see Berend's kfromangles function)
+        alpha0: offset angle for sample (see Berend's kfromangles function)
     Returns:
         kmeshx[0, :]: kx axis
         kmeshy[:, 0]: ky axis
@@ -214,7 +247,8 @@ def kcorrect_phimotor(fp=None, fn=None, data=None, ss=None, cs=None, p=None, sli
         'x': ss, 'y': cs, 'z': p
     }
     ax = choose_slice[slice_dim]
-    ax = ax - EF
+    if slice_dim == 'y':
+        ax = ax - EF
     start = ax[0]
     end = ax[-1]
     delta = np.mean(np.diff(ax))
@@ -338,20 +372,22 @@ if __name__ == '__main__':
     from plotters import plotCEk3D, plotCE3D
     from ali_polygons import gen_polygon, gen_tiled_hexagons, plot_polygons
     from data import AaData3D
+    import matplotlib.pyplot as plt
 
     """2D Test"""
-    # # load data
-    # d = Data2D.single_load('December', year='2020', filename='UPS_20K0001_001.ibw')
-    # # plot regular 2D data
-    # d.berend_data.show()  # Berend's
-    # bpl2(d.berend_data)  # Berend's
-    # plot2D(d.xaxis, d.yaxis - 16.8, d.data)  # mine
-    # # correct EF
-    # fix_EkatEF(d, 16.8)
-    # # generate and plot k corrected data
-    # kplot2D(d.berend_data)  # Berend's
-    # kx, ky, kdata = kcorrect2D(d)  # mine
-    # plot2D(kx, ky - 16.8, kdata)  # mine
+    # load data
+    d = Data2D.single_load('December', year='2020', filename='UPS_20K0001_001.ibw')
+    # plot regular 2D data
+    d.berend_dataclass.show()  # Berend's
+    bpl2(d.berend_dataclass)  # Berend's
+    plot2D(d.xaxis, d.yaxis - 16.8, d.data)  # mine
+    # correct EF
+    fix_EkatEF(d, 16.8)
+    # generate and plot k corrected data
+    ax = kplot2D(d.berend_dataclass)  # Berend's
+    plt.show()
+    kx, ky, kdata = kcorrect2D(d)  # mine
+    plot2D(kx, ky - 16.8, kdata)  # mine
 
     """3D Test"""
     # # # load data
@@ -386,10 +422,10 @@ if __name__ == '__main__':
     # plot_polygons([coords, new_coords, coords_bl, coords_tr, coords_l, coords_tl, coords_r], fig=fig)
 
     """3D Phi Motor Test"""
-    fp = r'C:\Users\atully\Code\ARPES Code Python\analysis_data\January_2021\LT\Lamp\3D\phi_motor_scan\FS_Y2021M01D25'
-    fn = r'FS_averaged.h5'
-    kx, ky, kdata = kcorrect_phimotor(fp=fp, fn=fn, slice_dim='y', val=-2.2, Eint=0.02, EF=16.9, theta0=0.5, phi0=-4)
-    fig = plot2D(kx, ky, kdata, xlabel='kx [A-1]', ylabel='ky [A-1]', title='Constant Energy Slice')
+    # fp = r'C:\Users\atully\Code\ARPES Code Python\analysis_data\January_2021\LT\Lamp\3D\phi_motor_scan\FS_Y2021M01D25'
+    # fn = r'FS_averaged.h5'
+    # kx, ky, kdata = kcorrect_phimotor(fp=fp, fn=fn, slice_dim='y', val=-2.2, Eint=0.02, EF=16.9, theta0=0.5, phi0=-4)
+    # fig = plot2D(kx, ky, kdata, xlabel='kx [A-1]', ylabel='ky [A-1]', title='Constant Energy Slice')
     #
     # """Add Hexagons"""
     # coords = gen_polygon(6, radius=0.42, rotation=15, translation=(0.2, -0.7))

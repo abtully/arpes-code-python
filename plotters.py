@@ -169,7 +169,8 @@ def kplot2D(Aa2D, kmode='edep', vmin=None, vmax=None, cmap='Spectral_r', ax=None
     if ax is None:
         fig, ax = plt.subplots(figsize=(size,size*asp))
     
-    ax.pcolormesh(kmesh, Emesh, Aa2D.data, cmap=cmap, vmin=vmin, vmax=vmax, rasterized=rasterized, **plotkwargs)
+    ax.pcolormesh(kmesh, Emesh, Aa2D.data, cmap=cmap, vmin=vmin, vmax=vmax, rasterized=rasterized, shading='auto',
+                  **plotkwargs)  # TODO: Ali added shading parameter
     ax.set_xlabel('kx [A-1]', fontsize = 12)
     ax.set_ylabel('Energy [eV]', fontsize = 12)    
     if plotrange is None:

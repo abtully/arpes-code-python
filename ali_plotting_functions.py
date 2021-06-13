@@ -11,6 +11,7 @@ import plotly.graph_objects as go
 from ali_classes import Data2D, Data3D
 from typing import List, Optional
 import numpy as np
+import copy
 
 DEFAULT_RENDERER = 'browser'  # this is a constant of this file
 
@@ -130,6 +131,15 @@ def mutliplot3D(x: np.ndarray, y: np.ndarray, z: np.ndarray, data: np.ndarray, s
 
     hm = heatmap3D(x=x, y=y, z=z, data=data, slice_dim=slice_dim, slice_val=slice_val, int_range=int_range, show=show,
                    opacity=opacity)
+
+
+def transpose_figure(fig: go.Figure) -> go.Figure:
+    fig = copy.copy(fig)
+    fig_data = fig.data[0]
+    x, y, data = fig_data['x'], fig_data['y'], fig_data['z']
+    fig_data['x'], fig_data['y'], fig_data['z'] = y, x, data.T
+    fig.data = [fig_data]
+    return fig
 
 
 if __name__ == '__main__':

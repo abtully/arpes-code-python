@@ -29,13 +29,13 @@ def get_vertical_slice(data, axis, value, interval):
     Gets vertical chunk of data
 
     Args:
-        data:
-        axis:
-        value:
-        interval:
+        data: numpy array
+        axis: typically x
+        value: in the axis unit (or can specify x[500] if you want the 500th index)
+        interval: total interval in the axis unit, centered on value
 
     Returns:
-        1D or 2D vertical chunk of data (kx)
+        1D or 2D vertical chunk of data
 
     """
     high = value + interval / 2
@@ -48,18 +48,46 @@ def get_vertical_slice(data, axis, value, interval):
     return chunk
 
 
-def get_averaged_slice(data) -> np.ndarray:
+def get_horizontal_slice(data, axis, value, interval):
+    """
+    Gets horizontal chunk of data
+
+    Args:
+        data: numpy array
+        axis: typically y
+        value: in the axis unit (or can specify y[500] if you want the 500th index)
+        interval: total interval in the axis unit, centered on value
+
+    Returns:
+        1D or 2D horizontal chunk of data
+
+    """
+    high = value + interval / 2
+    low = value - interval / 2
+    low_index, high_index = get_data_index(axis, (low, high))
+    if low_index == high_index:
+        chunk = data[low_index, :]
+    else:
+        chunk = data[low_index:high_index, :]
+    return chunk
+
+
+def get_averaged_slice(data, axis) -> np.ndarray:
     """
     Averages a slice of data
     Args:
-        data:
+        data: numpy array
+        axis: specify x or y
 
     Returns:
         1D numpy array
 
     """
     data = np.atleast_2d(data)
-    return np.mean(data, axis=1)
+    if axis == 'x':
+        return np.mean(data, axis=1)
+    if axis == 'y':
+        return np.mean(data, axis=0)
 
 
 if __name__ == '__main__':

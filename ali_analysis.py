@@ -7,7 +7,6 @@ import plotly.graph_objects as go
 import os
 from scipy.ndimage import gaussian_filter
 
-
 if __name__ == '__main__':
     """"""
     """Gaussian Mask, 2nd Derivative, and Analysis of HOMO (lmfit)"""
@@ -15,6 +14,7 @@ if __name__ == '__main__':
     # load data
     # d = Data2D.single_load(month='January', year='2021', filename='OMBE_Lamp_2D0001_.ibw')
     path = os.path.abspath('/Users/alexandratully/Desktop/ARPES Data/')
+    path = os.path.abspath('C:/Users/atully\Code\ARPES Code Python/analysis_data')
     d = Data2D.single_load(month='April', year='2021', light_source='XUV', filepath=path, filename='OMBE_XUV_2D0003_.ibw')
     # data, x, y = fourier_2d(d.data, d.xaxis, d.yaxis)
 
@@ -52,7 +52,8 @@ if __name__ == '__main__':
     # get region of gaussian mask data
     gauss_homo, gauss_homox, gauss_homoy = get_data_region(gauss_data, d.xaxis, d.yaxis, xbounds=(-18, 16),
                                                            ybounds=(-2.1, -1.38))
-    fig2 = plot2D(gauss_homox, gauss_homoy - 16.8, gauss_homo, title='Gaussian Mask (sigma = 5)', xlabel='Theta', ylabel='E_B')
+    fig2 = plot2D(gauss_homox, gauss_homoy - 16.8, gauss_homo, title='Gaussian Mask (sigma = 5)', xlabel='Theta',
+                  ylabel='E_B')
 
     # bin raw data
     homo_b, homox_b, homoy_b = bin_data_with_axes(homo, (3, 3), x=homox, y=homoy)
@@ -70,13 +71,14 @@ if __name__ == '__main__':
     y = gauss_homoy - 16.8
     import lmfit as lm
     from ali_analysis_functions import gaussian
+
     # model = lm.models.GaussianModel()
     model = lm.Model(gaussian)
     params = model.make_params()
     params.add('amplitude', 200, min=np.min(data), max=np.max(data))
     params.add('center', -1.6, min=np.min(y), max=np.max(y))
-    params.add('width', 1, min=0.001, max=np.max(y)-np.min(y))
-    params.add('const', 150, min=0.5*np.min(data), max=np.max(data))
+    params.add('width', 1, min=0.001, max=np.max(y) - np.min(y))
+    params.add('const', 150, min=0.5 * np.min(data), max=np.max(data))
     fit = model.fit(testdata.astype(np.float32), x=y.astype(np.float32), params=params)
     print(fit.fit_report())
     fit.plot()
