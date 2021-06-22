@@ -9,9 +9,9 @@ import numpy as np
 import plotly.io as pio
 import os
 
-from ali_functions import bin_2D
-from ali_plotting_functions import filepath_plot2D, filepath_plot3D, plot2D, plot3D
-from ali_classes import Data3D, Data2D
+from misc_functions import bin_2D
+from plotting_functions import filepath_plot2D, filepath_plot3D, plot2D, plot3D
+from arpes_dataclasses import Data3D, Data2D
 
 """Filepath Definition (Desktop and Macbook)"""
 Path = 'C:/Users/atully/Code/ARPES Code Python/data/'

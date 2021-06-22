@@ -1,3 +1,9 @@
+"""
+HDF5 file loader (required for phi_motor ARPES data)
+@author: Alexandra Tully
+@date: April 2021
+"""
+
 import h5py
 import os
 import numpy as np
@@ -45,12 +51,12 @@ def avg_data_hdf(fp: str, fn: str, data_avg: np.ndarray, p: np.ndarray, slice_sc
 
 
 if __name__ == '__main__':
-    from ali_plotting_functions import plot3D, plot2D
-    from ali_analysis_functions import get_data_region
-    from ali_k_correction import get2Dslice
+    from plotting_functions import plot3D, plot2D
+    from analysis_functions import get_data_region
+    from k_correction import get2Dslice
     from scipy.ndimage import gaussian_filter
-    from ali_k_correction import kcorrect_phimotor, get2Dslice
-    from ali_polygons import gen_polygon, gen_tiled_hexagons, plot_polygons, plot_polygon
+    from k_correction import kcorrect_phimotor, get2Dslice
+    from polygons import gen_polygon, gen_tiled_hexagons, plot_polygons, plot_polygon
 
     """JANUARY 2021"""
 

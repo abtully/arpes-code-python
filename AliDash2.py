@@ -9,12 +9,12 @@ import numpy as np
 import plotly.io as pio
 import os
 
-from ali_functions import bin_2D, bin_2D_array, sanitize
-from ali_plotting_functions import filepath_plot2D, filepath_plot3D, plot2D, plot3D
-from ali_classes import Data3D, Data2D
-from ali_HDF5_loader import data_from_hdf
-from ali_k_correction import fix_EkatEF, kcorrect2D, kcorrect3D, kcorrect_phimotor
-from ali_polygons import gen_polygon, gen_tiled_hexagons, plot_polygon, plot_polygons
+from misc_functions import bin_2D, bin_2D_array, sanitize
+from plotting_functions import filepath_plot2D, filepath_plot3D, plot2D, plot3D
+from arpes_dataclasses import Data3D, Data2D
+from HDF5_loader import data_from_hdf
+from k_correction import fix_EkatEF, kcorrect2D, kcorrect3D, kcorrect_phimotor
+from polygons import gen_polygon, gen_tiled_hexagons, plot_polygon, plot_polygons
 
 """Filepath Definition (Desktop and Macbook)"""
 PATH = 'C:/Users/atully/Code/ARPES Code Python/analysis_data/'

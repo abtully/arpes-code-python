@@ -1,10 +1,12 @@
+"""
+LEED analysis functions
+@author: Alexandra Tully
+@date: April 2021
+"""
+
 from PIL import Image
 import numpy as np
 from scipy.constants import h, m_e
-import os
-import matplotlib as mpl
-import matplotlib.pyplot as plt
-import plotly.graph_objects as go
 from typing import List, Optional
 
 DEFAULT_RENDERER = 'browser'  # this is a constant of this file
@@ -45,7 +47,7 @@ def distance_to_screen(a: float, x: float, E: int, n=1):  # E in eV, a and x n s
 
 
 if __name__ == '__main__':
-    from ali_leed_import import load_image, show_image
+    from leed_import import load_image, show_image
 
     fn = r'14_10_20_C60_Au111_1654.tiff'
 

@@ -10,11 +10,11 @@ import numpy as np
 import numpy.ma as ma
 import matplotlib.pyplot as plt
 # from arpes.slits import AnalyzeSlits, SlitCorrect
-from slits_new import AnalyzeSlits, SlitCorrect
+from zwartsenberg_slits_new import AnalyzeSlits, SlitCorrect
 # from arpes.gold import AnalyzeGold, AnalyzeGold1D, GoldCorrect, Gold1DCorrect, FDexpfit, FDexp
-from gold_new import AnalyzeGold, AnalyzeGold1D, GoldCorrect, Gold1DCorrect, FDexpfit, FDexp
+from zwartsenberg_gold_new import AnalyzeGold, AnalyzeGold1D, GoldCorrect, Gold1DCorrect, FDexpfit, FDexp
 # from arpes.kcorrection import anglesfromk,kfromangles,anglesfromkz
-from kcorrection_new_new import anglesfromk,kfromangles,anglesfromkz
+from zwartsenberg_kcorrection_new_new import anglesfromk,kfromangles,anglesfromkz
 import h5py
 from scipy.interpolate import RectBivariateSpline,interpn
 # import arpes.data_loaders as dl

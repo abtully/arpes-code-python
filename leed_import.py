@@ -1,3 +1,9 @@
+"""
+Low energy electron diffraction (LEED) images import functions (tested on .tiff files)
+@author: Alexandra Tully
+@date: April 2021
+"""
+
 from PIL import Image
 import numpy as np
 import os

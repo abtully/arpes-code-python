@@ -8,7 +8,7 @@ Created on Tue Nov  7 14:25:55 2017
 import numpy as np
 import matplotlib.pyplot as plt
 # from arpes.kcorrection import kfromangles, kzfromhv
-from kcorrection_new_new import kfromangles, kzfromhv
+from zwartsenberg_kcorrection_new_new import kfromangles, kzfromhv
 
 
 ################## 1D plotters ###############################################

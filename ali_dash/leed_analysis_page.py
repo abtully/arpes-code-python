@@ -16,7 +16,7 @@ from dash import no_update
 import dash_core_components as dcc
 from dash_extensions.enrich import MultiplexerTransform  # Dash Extensions has some super useful things!
 
-from ali_leed_import import get_filepath, load_image, show_image
+from leed_import import get_filepath, load_image, show_image
 
 logger = logging.getLogger(__name__)
 

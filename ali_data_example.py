@@ -16,7 +16,7 @@ import matplotlib as mpl
 Aapath = 'C:/Users/atully/Code/ARPES Code Python'
 sys.path.append(Aapath)
 
-from Data2DObject import AaData2D, AaData3D, UBCGold
+from zwartsenberg_Data2DObject import AaData2D, AaData3D, UBCGold
 
 datapath = 'C:/Users/atully/Code/ARPES Code Python/data/'
 

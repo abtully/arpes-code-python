@@ -1,9 +1,17 @@
-from ali_functions import get_data_index
+"""
+General analysis functions
+@author: Alexandra Tully
+@date: November 2020
+"""
+
+from misc_functions import get_data_index
 import numpy as np
 
 
 # set region of data
-def get_data_region(data: np.ndarray, xaxis: np.ndarray, yaxis: np.ndarray, xbounds: tuple = None, ybounds: tuple = None
+def get_data_region(data: np.ndarray, xaxis: np.ndarray, yaxis: np.ndarray,
+                    xbounds: tuple = None, ybounds: tuple = None,
+                    EB=False
                     ) -> tuple:
     if xbounds is not None:
         data_x = data[:, np.logical_and(xbounds[0] < xaxis, xaxis < xbounds[1])]
@@ -12,9 +20,17 @@ def get_data_region(data: np.ndarray, xaxis: np.ndarray, yaxis: np.ndarray, xbou
         data_x = data
         new_xaxis = xaxis
     if ybounds is not None:
-        new_region = data_x[np.logical_and(ybounds[0] < yaxis - 16.8, yaxis - 16.8 < ybounds[1])]
-        new_yaxis = yaxis[np.logical_and(ybounds[0] < yaxis - 16.8, yaxis - 16.8 < ybounds[1])]
+        if EB:
+            new_region = data_x[np.logical_and(ybounds[0] < yaxis - 16.8, yaxis - 16.8 < ybounds[1])]
+            new_yaxis = yaxis[np.logical_and(ybounds[0] < yaxis - 16.8, yaxis - 16.8 < ybounds[1])]
+        if not EB:
+            new_region = data_x[np.logical_and(ybounds[0] < yaxis, yaxis < ybounds[1])]
+            new_yaxis = yaxis[np.logical_and(ybounds[0] < yaxis, yaxis < ybounds[1])]
     elif ybounds is None:
+        if EB:
+            raise ValueError(f'{ybounds} is None, do not specify EB')
+        elif not EB:
+            pass
         new_region = data_x
         new_yaxis = yaxis
     return new_region, new_xaxis, new_yaxis
@@ -88,20 +104,3 @@ def get_averaged_slice(data, axis) -> np.ndarray:
         return np.mean(data, axis=1)
     if axis == 'y':
         return np.mean(data, axis=0)
-
-
-if __name__ == '__main__':
-    """Fit Gaussian or Lorentzian to data"""
-    import matplotlib.pyplot as plt
-    from scipy.optimize import curve_fit
-    from scipy.stats import norm
-    #
-    # n = len(c60_homox_b)
-    # mean = np.mean()
-    # sigma = sum(c60_homoy_b * (c60_homox_b - mean) ** 2) / n  # note this correction
-    #
-    #
-    # def gaus(x, a, x0, sigma):
-    #     return a * exp(-(x - x0) ** 2 / (2 * sigma ** 2))
-    #
-    # curve_fit(gaus, c60_homo_b[0], c60_homo_b[1])

@@ -1,5 +1,5 @@
 """
-Functions for ARPES Data
+Miscellaneous Functions for ARPES Data
 @author: Alexandra Tully
 @date: November 2020
 """
@@ -8,8 +8,9 @@ from typing import Union, List, Optional, Tuple, Iterable
 import numpy as np
 from scipy.stats import binned_statistic_2d
 # import cv2
-from ali_classes import Data2D
-from ali_plotting_functions import plot2D
+
+from arpes_dataclasses import Data2D
+from plotting_functions import plot2D
 
 """Load Datasets"""
 
@@ -41,6 +42,7 @@ def multi_load(scan_numbers: Union[List[int], np.ndarray], scan_type: str = 'Ras
 # reshape data array: (-1 =) let y axis be free, have num_x number of entries in x dimension with bin_x number of
 # datapoints per bin, then take the mean on that axis (so we have a 3D array but we take the mean in the bin_x dimension
 # and collapse back down to a 2D array.
+
 def bin_2D(data, bin_x: int, bin_y: int) -> np.ndarray:  # takes class for data
     # REMEMBER: data is index y, x (i.e. data[y,x] = value at (x, y))
     d = data.data
@@ -226,6 +228,17 @@ def sanitize(value, target_type, default_val):
         return [float(v) for v in value.split(',')]
 
 
+def line_intersection(fit1, fit2):
+    a1, b1 = fit1.best_values['i0_slope'], fit1.best_values['i0_intercept']
+    a2, b2 = fit2.best_values['i0_slope'], fit2.best_values['i0_intercept']
+    x = np.asarray((b2 - b1)/(a1 - a2))
+    y = np.asarray(a1 * x + b1)
+    y_check = np.asarray(a2 * x + b2)
+    if y != y_check:
+        raise ValueError(f'({x}, {y}) != ({x}, {y_check}), fits: y1 = {a1}x + {b1}, y2 = {a2}x + {b2}')
+    return x, y
+
+
 if __name__ == '__main__':
     # data = np.random.random((10, 10))
     # # data2 = np.random.random((3, 3)) * 2
@@ -245,8 +258,8 @@ if __name__ == '__main__':
     # plot2D(HS.yaxis, HS.xaxis - E_f, HS.data, opacity=0.5, xlabel='Theta', ylabel='E-E_F')
 
     import os
-    from ali_classes import Data3D
-    from ali_plotting_functions import plot3D
+    from arpes_dataclasses import Data3D
+    from plotting_functions import plot3D
     path = os.path.abspath('/Users/alexandratully/Desktop/ARPES Data/')
 
     data = Data3D.single_load(month='April', year='2021', light_source='XUV', cryo_temp='LT',

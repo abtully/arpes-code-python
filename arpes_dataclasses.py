@@ -9,7 +9,7 @@ import os
 import numpy as np
 from dataclasses import dataclass, field
 # from Data2DObject import AaData2D, AaData3D, UBCGold
-from data import AaData2D, AaData3D
+from zwartsenberg_data import AaData2D, AaData3D
 from functools import lru_cache
 
 
@@ -144,7 +144,7 @@ if __name__ == '__main__':
     # d9K = Data3D.single_load('October', cryo_temp='9K', scan_subtype='Fermi_Edge')
     # d9K.berend_data.show(mode='CE', val=16, Eint=0.02)
     #
-    from ali_plotting_functions import plot2D, plot3D
+    from plotting_functions import plot2D, plot3D
     d = Data2D.single_load('January', scan_number=3)
     d = Data2D.single_load('January', light_source='XUV', scan_number=3)
     d = Data2D.single_load('January', light_source='XUV', filename='OMBE_XUV_2D_2.ibw')

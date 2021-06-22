@@ -1,9 +1,15 @@
+"""
+K-correction functions; modifying code written by Berend Zwartsenberg
+@author: Alexandra Tully
+@date: March 2021
+"""
+
 import numpy as np
 from plotters import kplot2D
 from plotters import plot2D as bpl2
 from plotters import get_kmeshCE
-from kcorrection_new_new import kfromangles
-from ali_HDF5_loader import data_from_hdf
+from zwartsenberg_kcorrection_new_new import kfromangles
+from HDF5_loader import data_from_hdf
 from typing import Optional
 import plotly.io as pio
 
@@ -367,14 +373,14 @@ def ali_get_kmeshCE(data_class, atE, extend=True, EF: float = None, slice_dim: s
 
 
 if __name__ == '__main__':
-    from ali_classes import Data3D, Data2D
-    from ali_plotting_functions import plot2D, plot3D
+    from arpes_dataclasses import Data3D, Data2D
+    from plotting_functions import plot2D, plot3D
     from plotters import plotCEk3D, plotCE3D
-    from ali_polygons import gen_polygon, gen_tiled_hexagons, plot_polygons
-    from data import AaData3D
+    from polygons import gen_polygon, gen_tiled_hexagons, plot_polygons
+    from zwartsenberg_data import AaData3D
     import matplotlib.pyplot as plt
 
-    """2D Test"""
+    """2D Test (compare with Berend's results)"""
     # load data
     d = Data2D.single_load('December', year='2020', filename='UPS_20K0001_001.ibw')
     # plot regular 2D data
@@ -389,7 +395,7 @@ if __name__ == '__main__':
     kx, ky, kdata = kcorrect2D(d)  # mine
     plot2D(kx, ky - 16.8, kdata)  # mine
 
-    """3D Test"""
+    """3D Test (compare with Berend's results)"""
     # # # load data
     # # d = Data3D.single_load('January', scan_number=1)
     # d = Data3D.single_load('October', year='2020', scan_number=4, cryo_temp='RT')

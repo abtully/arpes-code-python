@@ -35,7 +35,7 @@ sys.path.append(Aapath)
 
 
 #import objects
-from Data2DObject import AaData2D, AaData3D, UBCGold
+from zwartsenberg_Data2DObject import AaData2D, AaData3D, UBCGold
 
 
 #variable to keep data path

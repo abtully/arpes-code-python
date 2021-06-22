@@ -1,5 +1,5 @@
 """
-Plotting Functions for ARPES Data
+Plotting functions for angle-resolved photoemission spectroscopy (ARPES) data
 @author: Alexandra Tully
 @date: November 2020
 
@@ -8,7 +8,7 @@ Colorscale options: https://plotly.com/python/builtin-colorscales/
 """
 
 import plotly.graph_objects as go
-from ali_classes import Data2D, Data3D
+from arpes_dataclasses import Data2D, Data3D
 from typing import List, Optional
 import numpy as np
 import copy
@@ -143,7 +143,7 @@ def transpose_figure(fig: go.Figure) -> go.Figure:
 
 
 if __name__ == '__main__':
-    from ali_classes import Data3D, Data2D
+    from arpes_dataclasses import Data3D, Data2D
 
     # d = Data3D.single_load('October', cryo_temp='RT', scan_subtype='Calibrate')
     # plot3D(x=d.yaxis, y=d.xaxis, z=d.zaxis, data=np.moveaxis(d.data, 2, 1), slice_dim='z', slice_val=15,

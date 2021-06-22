@@ -4,7 +4,7 @@ Generates and plots polygons
 @date: March 9, 2021
 
 1. generate polygon with scale, rotation (in degrees), and translation; returns list of coordinates
-3. plot coordinates with lines
+2. plot coordinates with lines
 """
 from typing import List, Tuple
 import numpy as np
