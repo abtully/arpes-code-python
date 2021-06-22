@@ -7,13 +7,11 @@ Fitting ARPES data from January 2021
 import numpy as np
 import plotly.graph_objects as go
 
-from HDF5_loader import data_from_hdf
-from plotting_functions import plot3D, plot2D, transpose_figure
-from analysis_functions import get_data_region, get_vertical_slice, get_averaged_slice, get_horizontal_slice
-from k_correction import kcorrect_phimotor, get2Dslice, kcorrect2D_general, kcorrect2D, fix_EkatEF
-from arpes_dataclasses import Data2D
-import fitting_functions as ff
-from misc_functions import line_intersection
+from arpes_functions.plotting_functions import plot2D
+from arpes_functions.analysis_functions import get_data_region, get_averaged_slice, get_horizontal_slice
+from arpes_functions.arpes_dataclasses import Data2D
+from arpes_functions import fitting_functions as ff
+from arpes_functions.misc_functions import line_intersection
 from leed_analysis import get_line_distance
 
 """ January Analysis """

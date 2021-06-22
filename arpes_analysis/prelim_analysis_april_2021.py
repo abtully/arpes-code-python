@@ -5,17 +5,11 @@ April 2021 ARPES measurement data loading and preliminary analysis
 """
 
 import numpy as np
-import os
-import plotly.graph_objects as go
 
-from HDF5_loader import data_from_hdf, avg_array_from_hdfs, avg_data_hdf
-from plotting_functions import plot3D, plot2D, transpose_figure
-from analysis_functions import get_data_region, get_vertical_slice, get_averaged_slice, get_horizontal_slice
-from k_correction import kcorrect_phimotor, get2Dslice, kcorrect2D_general, kcorrect2D, fix_EkatEF
-from polygons import gen_polygon, gen_tiled_hexagons, plot_polygons, plot_polygon
-from arpes_dataclasses import Data2D
-
-from scipy.ndimage import gaussian_filter
+from arpes_functions.HDF5_loader import data_from_hdf
+from arpes_functions.plotting_functions import plot3D, plot2D, transpose_figure
+from arpes_functions.k_correction import kcorrect_phimotor
+from arpes_functions.polygons import gen_polygon, gen_tiled_hexagons, plot_polygons, plot_polygon
 
 """APRIL 2021"""
 

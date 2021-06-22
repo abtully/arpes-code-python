@@ -5,11 +5,10 @@ K-correction functions; modifying code written by Berend Zwartsenberg
 """
 
 import numpy as np
-from plotters import kplot2D
-from plotters import plot2D as bpl2
-from plotters import get_kmeshCE
-from zwartsenberg_kcorrection_new_new import kfromangles
-from HDF5_loader import data_from_hdf
+from zwartsenberg.plotters import kplot2D
+from zwartsenberg.plotters import plot2D as bpl2
+from zwartsenberg.zwartsenberg_kcorrection_new_new import kfromangles
+from arpes_functions.HDF5_loader import data_from_hdf
 from typing import Optional
 import plotly.io as pio
 
@@ -373,11 +372,8 @@ def ali_get_kmeshCE(data_class, atE, extend=True, EF: float = None, slice_dim: s
 
 
 if __name__ == '__main__':
-    from arpes_dataclasses import Data3D, Data2D
-    from plotting_functions import plot2D, plot3D
-    from plotters import plotCEk3D, plotCE3D
-    from polygons import gen_polygon, gen_tiled_hexagons, plot_polygons
-    from zwartsenberg_data import AaData3D
+    from arpes_functions.arpes_dataclasses import Data2D
+    from plotting_functions import plot2D
     import matplotlib.pyplot as plt
 
     """2D Test (compare with Berend's results)"""

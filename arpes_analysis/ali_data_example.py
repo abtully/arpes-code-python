@@ -2,21 +2,15 @@
 Testing Imports of Ali's Data with Berend's Code
 """
 
-import lmfit
 import sys
-import PIL
-import scipy
-import h5py
-import numpy as np
-import igor
 import matplotlib.pyplot as plt
-import matplotlib as mpl
+
 # mpl.use('tkagg')
 
 Aapath = 'C:/Users/atully/Code/ARPES Code Python'
 sys.path.append(Aapath)
 
-from zwartsenberg_Data2DObject import AaData2D, AaData3D, UBCGold
+from zwartsenberg.zwartsenberg_Data2DObject import AaData3D, UBCGold
 
 datapath = 'C:/Users/atully/Code/ARPES Code Python/data/'
 

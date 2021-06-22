@@ -7,19 +7,8 @@ Note: Includes linear, lorentzian, and hyperbolic fits, as well an offset functi
 """
 
 import numpy as np
-import os
-import plotly.graph_objects as go
 import lmfit as lm
-from typing import Union, Optional, Tuple
-from scipy import optimize
-from scipy.ndimage import gaussian_filter
-
-from HDF5_loader import data_from_hdf, avg_array_from_hdfs, avg_data_hdf
-from plotting_functions import plot3D, plot2D, transpose_figure
-from analysis_functions import get_data_region, get_vertical_slice, get_averaged_slice, get_horizontal_slice
-from k_correction import kcorrect_phimotor, get2Dslice, kcorrect2D_general, kcorrect2D, fix_EkatEF
-from polygons import gen_polygon, gen_tiled_hexagons, plot_polygons, plot_polygon
-from arpes_dataclasses import Data2D
+from typing import Union, Optional
 
 
 def offset_model(offset_type: str, a: float = None, b: float = None, c: float = None) -> lm.models.QuadraticModel:

@@ -2,16 +2,14 @@ import dash
 import dash_core_components as dcc
 import dash_html_components as html
 import dash_bootstrap_components as dbc
-from dash.dependencies import Input, Output, State, MATCH, ALL, ALLSMALLER
-from typing import List, Union, Optional, Tuple
+from dash.dependencies import Input, Output, State
 import plotly.graph_objects as go
 import numpy as np
 import plotly.io as pio
-import os
 
-from misc_functions import bin_2D
-from plotting_functions import filepath_plot2D, filepath_plot3D, plot2D, plot3D
-from arpes_dataclasses import Data3D, Data2D
+from arpes_functions.misc_functions import bin_2D
+from arpes_functions.plotting_functions import plot2D, plot3D
+from arpes_functions.arpes_dataclasses import Data3D, Data2D
 
 """Filepath Definition (Desktop and Macbook)"""
 Path = 'C:/Users/atully/Code/ARPES Code Python/data/'

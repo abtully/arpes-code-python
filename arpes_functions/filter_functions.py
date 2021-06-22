@@ -8,8 +8,8 @@ import numpy as np
 from scipy.ndimage import gaussian_filter
 
 from plotting_functions import plot2D
-from arpes_dataclasses import Data2D
-from analysis_functions import get_data_region
+from arpes_functions.arpes_dataclasses import Data2D
+from arpes_functions.analysis_functions import get_data_region
 
 
 def fourier_2d(data: np.ndarray, xaxis: np.ndarray, yaxis: np.ndarray):

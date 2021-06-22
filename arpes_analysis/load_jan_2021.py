@@ -1,10 +1,3 @@
-from plotting_functions import plot3D, plot2D
-from analysis_functions import get_data_region
-from k_correction import get2Dslice, fix_EkatEF, kcorrect3D
-from scipy.ndimage import gaussian_filter
-from k_correction import kcorrect_phimotor, get2Dslice
-from polygons import gen_polygon, gen_tiled_hexagons, plot_polygons, plot_polygon
-
 """JANUARY 2021"""
 
 """HOMO, Theta=15"""

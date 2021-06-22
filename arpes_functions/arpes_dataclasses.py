@@ -7,9 +7,8 @@ Class Definitions for ARPES Data (2D and 3D)
 
 import os
 import numpy as np
-from dataclasses import dataclass, field
 # from Data2DObject import AaData2D, AaData3D, UBCGold
-from zwartsenberg_data import AaData2D, AaData3D
+from zwartsenberg.zwartsenberg_data import AaData2D, AaData3D
 from functools import lru_cache
 
 

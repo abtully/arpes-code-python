@@ -6,11 +6,9 @@ Miscellaneous Functions for ARPES Data
 
 from typing import Union, List, Optional, Tuple, Iterable
 import numpy as np
-from scipy.stats import binned_statistic_2d
 # import cv2
 
-from arpes_dataclasses import Data2D
-from plotting_functions import plot2D
+from arpes_functions.arpes_dataclasses import Data2D
 
 """Load Datasets"""
 

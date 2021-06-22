@@ -4,10 +4,10 @@ General analysis of early 2021 data
 @date: November 2020
 """
 
-from arpes_dataclasses import Data2D
-from plotting_functions import plot2D
-from misc_functions import bin_data_with_axes
-from analysis_functions import get_data_region, get_vertical_slice, get_averaged_slice
+from arpes_functions.arpes_dataclasses import Data2D
+from arpes_functions.plotting_functions import plot2D
+from arpes_functions.misc_functions import bin_data_with_axes
+from arpes_functions.analysis_functions import get_data_region, get_vertical_slice, get_averaged_slice
 import numpy as np
 import plotly.graph_objects as go
 import os
@@ -76,7 +76,7 @@ if __name__ == '__main__':
     data = gauss_homo
     y = gauss_homoy - 16.8
     import lmfit as lm
-    from analysis_functions import gaussian
+    from arpes_functions.analysis_functions import gaussian
 
     # model = lm.models.GaussianModel()
     model = lm.Model(gaussian)

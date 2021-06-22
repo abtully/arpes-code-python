@@ -8,7 +8,7 @@ Colorscale options: https://plotly.com/python/builtin-colorscales/
 """
 
 import plotly.graph_objects as go
-from arpes_dataclasses import Data2D, Data3D
+from arpes_functions.arpes_dataclasses import Data2D
 from typing import List, Optional
 import numpy as np
 import copy
@@ -143,7 +143,7 @@ def transpose_figure(fig: go.Figure) -> go.Figure:
 
 
 if __name__ == '__main__':
-    from arpes_dataclasses import Data3D, Data2D
+    from arpes_functions.arpes_dataclasses import Data3D, Data2D
     from misc_functions import multi_load
 
     # d = Data3D.single_load('October', cryo_temp='RT', scan_subtype='Calibrate')
