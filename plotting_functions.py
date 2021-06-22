@@ -144,64 +144,22 @@ def transpose_figure(fig: go.Figure) -> go.Figure:
 
 if __name__ == '__main__':
     from arpes_dataclasses import Data3D, Data2D
+    from misc_functions import multi_load
 
     # d = Data3D.single_load('October', cryo_temp='RT', scan_subtype='Calibrate')
     # plot3D(x=d.yaxis, y=d.xaxis, z=d.zaxis, data=np.moveaxis(d.data, 2, 1), slice_dim='z', slice_val=15,
     # int_range=0.02)
     # d.berend_data.show(mode='CE', val=15, Eint=0.02)
 
-    d = Data2D.single_load('December', year='2020', light_source='XUV', filename='UPS_20K0001_001.ibw')
     d = Data2D.single_load('December', year='2020', filename='UPS_20K0001_001.ibw')
     plot2D(d.xaxis, d.yaxis-16.8, d.data)
     d = Data2D.single_load(month='January', year='2021', light_source='XUV', scan_number=4)
     plot2D(d.xaxis, d.yaxis, d.data)
 
-    # raster = Data2D.single_load('October', scan_type='Raster', scan_number=15)
-    # E_f = 16.8
-    # plot2D(raster.yaxis, raster.xaxis - E_f, raster.data, opacity=0.7, xrange=(-20, 17))
-    #
-    # from AliFunctions import multi_load
-    # rasters = multi_load(i for i in range(10, 14))
-    # heatmaps = multi_heatmaps(rasters, E_f=16.8, opacity=0.5)
-    # multi_plot2D(heatmaps, title='Test')
+    raster = Data2D.single_load('October', year='2020', cryo_temp='RT', scan_number=15, filename='Raster0015_015.ibw')
+    E_f = 16.8
+    plot2D(raster.yaxis, raster.xaxis - E_f, raster.data, opacity=0.7, xrange=(-20, 17))
 
-    # filepath_plot2D('C:/Users/atully/Code/ARPES Code Python/data/', 'October', k_cut='GM')
-    # filepath_plot3D('C:/Users/atully/Code/ARPES Code Python/data/', month='October', year=2020, scan_type='FS',
-    #                 scan_subtype='Fermi_Surface', scan_number=1, slice_dim='z', slice_val=15, int_range=0.02,
-    #                 colorscale='Plasma', cryo_temp='140K')
-
-    # [i for i in range(10, 20)]  # list of numbers 10 to 19
-    # np.arange(10, 20)  # an array from 10 to 20
-
-    # data = np.random.random((3, 3))
-    # data2 = np.random.random((3, 3)) * 2
-    # x = np.linspace(0, 1, 3)
-    # fig = go.Figure()
-    # fig.add_trace(go.Heatmap(x=x, y=x, z=data, coloraxis="coloraxis"))
-    # fig.add_trace(go.Heatmap(x=x, y=x, z=data2, coloraxis="coloraxis"))
-    # fig.update_layout(xaxis=dict(range=[0.4, 0.8]))
-    # fig.show(renderer=DEFAULT_RENDERER)
-
-    # E_f = 16.8
-    # HS = Data2D.single_load('October', k_cut='GM')
-    # plot2D(HS.yaxis, HS.xaxis - E_f, HS.data, opacity=0.5, xlabel='Theta', ylabel='E-E_F')
-    #
-    # E_f = 16.8
-    # Raster = Data2D.single_load('October', scan_type='Raster', scan_number=12)
-    # _, Raster12 = plot2D(Raster.yaxis, Raster.xaxis - E_f, Raster.data, opacity=0.5, xlabel='Theta', ylabel='E-E_F')
-    #
-    # Raster = Data2D.single_load('October', scan_type='Raster', scan_number=15)
-    # _, Raster15 = plot2D(Raster.yaxis, Raster.xaxis - E_f, Raster.data, opacity=0.5, xlabel='Theta', ylabel='E-E_F')
-    #
-    # multi_plot2D(Raster12, Raster15)
-    #
-    # Raster = [Data2D.single_load('October', scan_type='Raster', scan_number=i) for i in
-    #           np.ndarray.tolist([np.linspace(1, 24, 25)])]
-    #
-    # [np.linspace(1, 24, 25)]
-    # x = np.linspace(0, 100, 101)
-    # y = np.linspace(0, 100, 101)
-    # xx, yy = np.meshgrid(x, y)
-    # data = np.sin(xx) + np.cos(yy)
-    # plot2D(x, y, data)
-    #
+    rasters = multi_load(i for i in range(10, 14))
+    heatmaps = multi_heatmaps(rasters, E_f=16.8, opacity=0.5)
+    multi_plot2D(heatmaps, title='Test')

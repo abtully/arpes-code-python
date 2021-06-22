@@ -15,11 +15,16 @@ from plotting_functions import plot2D
 """Load Datasets"""
 
 
-def multi_load(scan_numbers: Union[List[int], np.ndarray], scan_type: str = 'Raster', month: str = 'October') -> List[
+def multi_load(scan_numbers: Union[List[int], np.ndarray], scan_type: str = 'Raster',
+               month: str = 'October', year: str = '2020', cryo_temp: str = 'RT') -> List[
     Data2D]:
     datas = []
     for num in scan_numbers:
-        datas.append(Data2D.single_load(month=month, scan_type=scan_type, scan_number=num))
+        if scan_type == 'Raster':
+            fn = f'Raster{num:04d}_{num:03d}.ibw'
+        else:
+            raise ValueError(f'{scan_type} is not Raster')
+        datas.append(Data2D.single_load(month=month, year=year, filename=fn, cryo_temp=cryo_temp))
     return datas
 
 
@@ -77,6 +82,7 @@ def bin_data(data: np.ndarray, bin_x: int = 1, bin_y: int = 1, bin_z: int = 1) -
         bin_y (): Bin size in y
         bin_z (): Bin size in z
     Returns:
+        data
 
     """
     ndim = data.ndim
@@ -238,36 +244,3 @@ def line_intersection(fit1, fit2):
         raise ValueError(f'({x}, {y}) != ({x}, {y_check}), fits: y1 = {a1}x + {b1}, y2 = {a2}x + {b2}')
     return x, y
 
-
-if __name__ == '__main__':
-    # data = np.random.random((10, 10))
-    # # data2 = np.random.random((3, 3)) * 2
-    # x = np.linspace(0, 1, 10)
-    # E_f = 16.8
-    # HS = Data2D.single_load('October', k_cut='GM')
-    # # x, y, data = bin_data2D(HS, 5)
-    # x, y, data2 = bin_2D(HS, 5, 5)
-    # # x = np.linspace(HS.xaxis[0], HS.xaxis[-1], data2.shape[0])
-    #
-    # fig = plot2D(x, y, data2, colorscale='plasma')
-    # plot2D(HS.yaxis, HS.xaxis, HS.data)
-
-    # data = np.random.random((100, 100))
-    # fig = go.Figure()
-
-    # plot2D(HS.yaxis, HS.xaxis - E_f, HS.data, opacity=0.5, xlabel='Theta', ylabel='E-E_F')
-
-    import os
-    from arpes_dataclasses import Data3D
-    from plotting_functions import plot3D
-    path = os.path.abspath('/Users/alexandratully/Desktop/ARPES Data/')
-
-    data = Data3D.single_load(month='April', year='2021', light_source='XUV', cryo_temp='LT',
-                              scan_type='deflector_scan', scan_number=1,
-                              filepath=path)
-    x, y, z, d = data.xaxis, data.yaxis, data.zaxis, data.data
-    slice_val = -1.6
-    E_f = 18.2
-    fig = plot3D(y, x, z, data=np.moveaxis(d, 2, 1),
-                 slice_dim='z', slice_val=slice_val + E_f, int_range=0.02, show=True,
-                 colorscale='Plasma', xlabel='Theta (Deg)', ylabel='Phi (Deg)')
