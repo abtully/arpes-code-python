@@ -115,12 +115,12 @@ def plot3D(x: np.ndarray, y: np.ndarray, z: np.ndarray, data: np.ndarray, slice_
                   xrange=xrange, yrange=yrange, dark_mode=dark_mode, colorscale=colorscale)
 
 
-def filepath_plot3D(filepath: str, month, year=2020, laser='lamp', cryo_temp='RT', scan_type='FS', scan_subtype=None,
-                    scan_number=1, slice_dim='z', slice_val=15, int_range=0.02, filename=None, colorscale='Plasma') -> go.Figure:
+def filepath_plot3D(filepath: str, month, year=2020, laser='lamp', cryo_temp='RT', scan_type='FS',
+                    scan_number=1, slice_dim='z', slice_val=15, int_range=0.02, filename=None, colorscale='Plasma') \
+        -> go.Figure:
     # print(type(int_range), type(slice_val), type(slice_dim))
     data = Data3D.single_load(month, year=year, light_source=laser, cryo_temp=cryo_temp, scan_type=scan_type,
-                              scan_subtype=scan_subtype, scan_number=scan_number, filename=filename, filepath=filepath)
-    # print('Here')
+                              scan_number=scan_number, filename=filename, filepath=filepath)
     return plot3D(x=data.yaxis, y=data.xaxis, z=data.zaxis, data=np.moveaxis(data.data, 2, 1), slice_dim=slice_dim,
                   slice_val=slice_val, int_range=int_range, show=False, colorscale=colorscale)
 
@@ -128,9 +128,9 @@ def filepath_plot3D(filepath: str, month, year=2020, laser='lamp', cryo_temp='RT
 def mutliplot3D(x: np.ndarray, y: np.ndarray, z: np.ndarray, data: np.ndarray, slice_dim: str, slice_val: float,
            int_range: float = 0, show=True, opacity=None, xlabel=None, ylabel=None, title=None, xrange: tuple = None,
            yrange: tuple = None, dark_mode=False, colorscale='Plasma'):
-
-    hm = heatmap3D(x=x, y=y, z=z, data=data, slice_dim=slice_dim, slice_val=slice_val, int_range=int_range, show=show,
-                   opacity=opacity)
+    raise NotImplementedError
+    # hm = heatmap3D(x=x, y=y, z=z, data=data, slice_dim=slice_dim, slice_val=slice_val, int_range=int_range, show=show,
+    #                opacity=opacity)
 
 
 def transpose_figure(fig: go.Figure) -> go.Figure:
