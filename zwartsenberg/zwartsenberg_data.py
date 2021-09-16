@@ -10,17 +10,16 @@ import numpy as np
 import numpy.ma as ma
 import matplotlib.pyplot as plt
 # from arpes.slits import AnalyzeSlits, SlitCorrect
-from zwartsenberg_slits_new import AnalyzeSlits, SlitCorrect
+from .zwartsenberg_slits_new import AnalyzeSlits, SlitCorrect
 # from arpes.gold import AnalyzeGold, AnalyzeGold1D, GoldCorrect, Gold1DCorrect, FDexpfit, FDexp
-from zwartsenberg_gold_new import AnalyzeGold, AnalyzeGold1D, GoldCorrect, Gold1DCorrect, FDexpfit, FDexp
+from .zwartsenberg_gold_new import AnalyzeGold, AnalyzeGold1D, GoldCorrect, Gold1DCorrect, FDexpfit, FDexp
 # from arpes.kcorrection import anglesfromk,kfromangles,anglesfromkz
-from zwartsenberg_kcorrection_new_new import anglesfromk,kfromangles,anglesfromkz
+from .zwartsenberg_kcorrection_new_new import anglesfromk,kfromangles,anglesfromkz
 import h5py
 from scipy.interpolate import RectBivariateSpline,interpn
 # import arpes.data_loaders as dl
-import data_loaders as dl
+from zwartsenberg import data_loaders as dl
 # import arpes.plotters as pl
-import plotters as pl
 from matplotlib.path import Path
 from warnings import warn
 
@@ -262,7 +261,7 @@ class AaData1D(Data1D):
         
             
     # from arpes.plotters import plot1D
-    from plotters import plot1D
+    from .plotters import plot1D
 
     def show(self, mode='row', **kwargs):
         """General plotfunction
@@ -515,10 +514,10 @@ class AaData2D(Data2D):
     # from arpes.plotters import kplot2D
     # from arpes.plotters import plotEDC2D
     # from arpes.plotters import plotMDC2D
-    from plotters import plot2D
-    from plotters import kplot2D
-    from plotters import plotEDC2D
-    from plotters import plotMDC2D
+    from .plotters import plot2D
+    from .plotters import kplot2D
+    from .plotters import plotEDC2D
+    from .plotters import plotMDC2D
 
 
     def show(self, mode=None, **kwargs):
@@ -823,14 +822,14 @@ class AaData3D(Data3D):
     # from arpes.plotters import plotkpath2_3D
     # from arpes.plotters import plotEDC3D
     # from arpes.plotters import plotkz3D
-    from plotters import plotCE3D
-    from plotters import plotCEk3D
-    from plotters import plotcol3D
-    from plotters import plotlay3D
-    from plotters import plotkpath3D
-    from plotters import plotkpath2_3D
-    from plotters import plotEDC3D
-    from plotters import plotkz3D
+    from .plotters import plotCE3D
+    from .plotters import plotCEk3D
+    from .plotters import plotcol3D
+    from .plotters import plotlay3D
+    from .plotters import plotkpath3D
+    from .plotters import plotkpath2_3D
+    from .plotters import plotEDC3D
+    from .plotters import plotkz3D
             
     def show(self, mode=None, **kwargs):
         """General plotfunction
@@ -1748,8 +1747,8 @@ class SpinPol():
 
     # from arpes.plotters import plotspinpol
     # from arpes.plotters import plotspin
-    from plotters import plotspinpol
-    from plotters import plotspin
+    from .plotters import plotspinpol
+    from .plotters import plotspin
 
     def show(self, mode='spin', **kwargs):
         """General plotfunction
@@ -1791,8 +1790,8 @@ class CPSA():
 
     # from arpes.plotters import plotcpspol
     # from arpes.plotters import plotcoan
-    from plotters import plotcpspol
-    from plotters import plotcoan
+    from .plotters import plotcpspol
+    from .plotters import plotcoan
 
     def show(self, mode='cps', **kwargs):
         """General plotfunction

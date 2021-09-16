@@ -242,3 +242,5 @@ def line_intersection(fit1, fit2):
         raise ValueError(f'({x}, {y}) != ({x}, {y_check}), fits: y1 = {a1}x + {b1}, y2 = {a2}x + {b2}')
     return x, y
 
+
+

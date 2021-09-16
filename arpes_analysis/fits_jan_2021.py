@@ -12,7 +12,7 @@ from arpes_functions.analysis_functions import get_data_region, get_averaged_sli
 from arpes_functions.arpes_dataclasses import Data2D
 from arpes_functions import fitting_functions as ff
 from arpes_functions.misc_functions import line_intersection
-from leed_analysis import get_line_distance
+from leed_analysis.leed_analysis import get_line_distance
 
 """ January Analysis """
 

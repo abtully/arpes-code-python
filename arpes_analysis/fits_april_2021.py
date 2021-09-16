@@ -8,6 +8,7 @@ import numpy as np
 import plotly.graph_objects as go
 
 from arpes_functions.HDF5_loader import data_from_hdf
+from arpes_functions.arpes_dataclasses import Data2D
 from arpes_functions.plotting_functions import plot3D, plot2D, transpose_figure
 from arpes_functions.analysis_functions import get_data_region, get_averaged_slice, get_horizontal_slice
 from arpes_functions import fitting_functions as ff
@@ -82,6 +83,7 @@ fig2.show()
 
 """ Fit Lorentzians to Multiple Slices of Data """
 
+# Get Lorentzian Peaks
 fig = plot2D(x, y, d,
              title=f'FS at gamma XUV {slice_val}eV, int_range:{int_range}', xlabel='Theta', ylabel='Energy')
 fits = []
@@ -100,6 +102,37 @@ for yval in np.linspace(17.8, 18.25, 20):
 fig.add_trace(go.Scatter(x=[c[0] for c in coords], y=[c[1] for c in coords],
                          mode='markers', marker=dict(color='black'), name='peak centers'))
 fig.show()
+
+# Fit Lines to Lorentzian Peaks and Print Slopes (Fermi Velocity Fits)
+x_lines, y_lines = np.array([c[0] for c in coords]), np.array([c[1] for c in coords])
+fit1 = ff.fit_linear_data(x=x_lines[np.where(x_lines < -20)], data=y_lines[np.where(x_lines < -20)],
+                          num=1,
+                          aes=1, bes=1,
+                          offset_type=None)
+fig.add_trace(go.Scatter(x=x,
+                         y=fit1.eval(x=x),
+                         mode='lines', name='linear fit', line=dict(color='turquoise', dash='dash')))
+
+fit2 = ff.fit_linear_data(x=x_lines[np.where(np.logical_and(-10 > x_lines, x_lines > -20))],
+                          data=y_lines[np.where(np.logical_and(-10 > x_lines, x_lines > -20))],
+                          num=1,
+                          aes=1, bes=1,
+                          offset_type=None)
+fig.add_trace(go.Scatter(x=x,
+                         y=fit2.eval(x=x),
+                         mode='lines', name='linear fit', line=dict(color='turquoise', dash='dash')))
+
+fit3 = ff.fit_linear_data(x=x_lines[np.where(np.logical_and(-7 < x_lines, x_lines < 0))],
+                          data=y_lines[np.where(np.logical_and(-7 < x_lines, x_lines < 0))],
+                          num=1,
+                          aes=1, bes=1,
+                          offset_type=None)
+fig.add_trace(go.Scatter(x=x,
+                         y=fit3.eval(x=x),
+                         mode='lines', name='linear fit', line=dict(color='turquoise', dash='dash')))
+
+fig.show()
+print(fit1.best_values['i0_slope'], fit2.best_values['i0_slope'], fit3.best_values['i0_slope'])
 
 # fig.data = fig.data[:-1]  # removes last trace addition to figure
 
@@ -189,3 +222,60 @@ fig.show()
 # kx, ky, kdata = kcorrect_phimotor(fp=fp, fn='XUV_FS_averaged.h5', val=val, Eint=2, EF=18.4, slice_dim='x',
 #                                   phi_m=6.5, theta_m=-1, phi0=-13, theta0=-0.6, alpha0=0)
 # fig = plot2D(x=kx, y=np.flip(ky), data=kdata, xlabel='kx [A-1]', ylabel='ky [A-1]', title=f'{val}eV (XUV)')
+
+"""Long Ass Scan of HOMO: G -> K -> M"""
+# Load Data #
+scan_number = 15
+# raw data
+# d = Data2D.single_load('January', year='2021', light_source='XUV', filename='OMBE_XUV_2D0004_.ibw')
+data = Data2D.single_load(month='April', year='2021', light_source='XUV', scan_number=scan_number)
+plot2D(data.xaxis, data.yaxis, data.data, title='OMBE_XUV_2D0004_.ibw, January 2021', xlabel='Theta', ylabel='KE')
+
+# zoom in on cone
+d, x, y = get_data_region(data.data, data.xaxis, data.yaxis, xbounds=(-12, 8), ybounds=(17.1, 18.4), EB=False)
+fig = plot2D(x, y, d, title='OMBE_XUV_2D0015_.ibw, April 2021', xlabel='Theta', ylabel='KE')
+
+""" Fit Lorentzians"""
+
+# Get Lorentzian Peaks
+fig = plot2D(x, y, d,
+             title=f'FS at gamma XUV Scan #{scan_number}', xlabel='Theta', ylabel='Energy')
+fits = []
+coords = []
+num_peaks = 2
+# for row, y_ in zip(d, y):
+#     if 17.8 < y_ < 18.25:
+for yval in np.linspace(17.4, 18.25, 20):
+    row = get_averaged_slice(get_horizontal_slice(d, y, yval, 0.1), axis='y')
+    fit = ff.fit_lorentzian_data(x=x, data=row,
+                                 num_peaks=num_peaks, amplitudes=300, centers=[-3.5, 2], sigmas=1,
+                                 offset_type='linear')
+    fits.append(fit)
+    coords.extend([(fit.best_values[f'i{i}_center'], yval) for i in range(num_peaks)])
+
+fig.add_trace(go.Scatter(x=[c[0] for c in coords], y=[c[1] for c in coords],
+                         mode='markers', marker=dict(color='black'), name='peak centers'))
+fig.show()
+
+# Fit Lines to Lorentzian Peaks and Print Slopes (Fermi Velocity Fits)
+x_lines, y_lines = np.array([c[0] for c in coords]), np.array([c[1] for c in coords])
+fit1 = ff.fit_linear_data(x=x_lines[np.where(np.logical_and(x_lines < -1, x_lines > -3.6))],
+                          data=y_lines[np.where(np.logical_and(x_lines < -1, x_lines > -3.6))],
+                          num=1,
+                          aes=1, bes=1,
+                          offset_type=None)
+fig.add_trace(go.Scatter(x=x,
+                         y=fit1.eval(x=x),
+                         mode='lines', name='linear fit', line=dict(color='turquoise', dash='dash')))
+
+fit2 = ff.fit_linear_data(x=x_lines[np.where(np.logical_and(y_lines < 18.05, x_lines > 0))],
+                          data=y_lines[np.where(np.logical_and(y_lines < 18.05, x_lines > 0))],
+                          num=1,
+                          aes=1, bes=1,
+                          offset_type=None)
+fig.add_trace(go.Scatter(x=x,
+                         y=fit2.eval(x=x),
+                         mode='lines', name='linear fit', line=dict(color='turquoise', dash='dash')))
+
+fig.show()
+print(fit1.best_values['i0_slope'], fit2.best_values['i0_slope'])
