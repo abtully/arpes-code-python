@@ -4,7 +4,7 @@ General analysis functions
 @date: November 2020
 """
 
-from .misc_functions import get_data_index
+from misc_functions import get_data_index
 import numpy as np
 
 
@@ -106,9 +106,25 @@ def get_averaged_slice(data, axis) -> np.ndarray:
         return np.mean(data, axis=0)
 
 
-# get 2D slice of 3D data (based on plot_3D function)
 def get_2Dslice(x: np.ndarray, y: np.ndarray, z: np.ndarray, data: np.ndarray, slice_dim: str, slice_val: float,
-           int_range: float = 0):
+                int_range: float = 0):
+    """
+    Gets 2D slice of 3D data (based on plot_3D function in plotting_functions)
+    Args:
+        x: 1D numpy array
+        y: 1D numpy array
+        z: 1D numpy array
+        data: 3D numpy array
+        int_range: range for integration along slice dimension (float)
+        slice_val: center value for slice along slice dimension (float)
+        slice_dim: x, y, or z (typically y for constant energy, or z for kx vs energy (constant phi))
+
+    Returns:
+        axes_2d[0]: 1D numpy array
+        axes_2d[1]: 1D numpy array
+        data2d: 2D numpy array
+
+    """
     if slice_dim == 'x':
         a = x
         axis_from = 2
