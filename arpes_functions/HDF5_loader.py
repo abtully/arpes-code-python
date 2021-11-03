@@ -33,9 +33,9 @@ def avg_array_from_hdfs(fp: str, fns: list) -> np.ndarray:
 
 
 def data_from_hdf(fp: str, dataname: str):  # returns 4 ndarrays
-    p = array_from_hdf(os.path.join(fp, dataname), 'p')
-    ss = array_from_hdf(os.path.join(fp, dataname), 'slice_scale')
-    cs = array_from_hdf(os.path.join(fp, dataname), 'channel_scale')
+    p = array_from_hdf(os.path.join(fp, dataname), 'p')  # ky (phi motor slices -- 102 steps, typically)
+    ss = array_from_hdf(os.path.join(fp, dataname), 'slice_scale')  # kx
+    cs = array_from_hdf(os.path.join(fp, dataname), 'channel_scale')  # energy
     data = array_from_hdf(os.path.join(fp, dataname), 'data')
     return data, ss, cs, p
 

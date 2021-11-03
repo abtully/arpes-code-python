@@ -104,3 +104,35 @@ def get_averaged_slice(data, axis) -> np.ndarray:
         return np.mean(data, axis=1)
     if axis == 'y':
         return np.mean(data, axis=0)
+
+
+# get 2D slice of 3D data (based on plot_3D function)
+def get_2Dslice(x: np.ndarray, y: np.ndarray, z: np.ndarray, data: np.ndarray, slice_dim: str, slice_val: float,
+           int_range: float = 0):
+    if slice_dim == 'x':
+        a = x
+        axis_from = 2
+        axes_2d = (y, z)
+    elif slice_dim == 'y':
+        a = y
+        axis_from = 1
+        axes_2d = (x, z)
+    elif slice_dim == 'z':
+        a = z
+        axis_from = 0
+        axes_2d = (x, y)
+    else:
+        raise ValueError(f'{slice_dim} is not x, y, or z')
+    slice_index = np.argmin(np.abs(a - slice_val))  # gives n; z[n] = value closest to slice_val
+    int_index_range = np.floor(int_range / (2 * np.mean(np.diff(a)))).astype(
+        int)  # gets avg delta between z, rounds down
+    data = np.moveaxis(data, axis_from, 0)
+    if int_index_range > 0:
+        low = slice_index - int_index_range
+        low = low if low > 0 else None
+        high = slice_index + int_index_range
+        high = high if high < data.shape[0] else None
+        data2d = data[low: high].mean(axis=0)
+    else:
+        data2d = data[slice_index]
+    return axes_2d[0], axes_2d[1], data2d

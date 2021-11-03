@@ -20,7 +20,7 @@ DEFAULT_RENDERER = 'browser'  # this is a constant of this file
 
 def plot2D(x: np.ndarray, y: np.ndarray, data: np.ndarray, show=True, opacity=None, xlabel=None, ylabel=None,
            title=None, xrange: tuple = None, yrange: tuple = None, dark_mode=False, colorscale='Plasma',
-           E_f: float = None):
+           E_f: float = None, renderer=DEFAULT_RENDERER):
     fig = go.Figure()
     if E_f is not None and E_f != '':
         y = y-float(E_f)
@@ -35,7 +35,7 @@ def plot2D(x: np.ndarray, y: np.ndarray, data: np.ndarray, show=True, opacity=No
     if yrange:
         fig.update_layout(yaxis=dict(range=[yrange[0], yrange[1]]))
     if show:
-        fig.show(renderer=DEFAULT_RENDERER)
+        fig.show(renderer=renderer)
     return fig
 
 
@@ -84,7 +84,7 @@ def multi_heatmaps(datas: List[Data2D], E_f: float, opacity: Optional[float] = N
 # plot 2D slice of 3D data
 def plot3D(x: np.ndarray, y: np.ndarray, z: np.ndarray, data: np.ndarray, slice_dim: str, slice_val: float,
            int_range: float = 0, show=True, opacity=None, xlabel=None, ylabel=None, title=None, xrange: tuple = None,
-           yrange: tuple = None, dark_mode=False, colorscale='Plasma'):
+           yrange: tuple = None, dark_mode=False, colorscale='Plasma', renderer=DEFAULT_RENDERER):
     if slice_dim == 'x':
         a = x
         axis_from = 2
@@ -112,7 +112,7 @@ def plot3D(x: np.ndarray, y: np.ndarray, z: np.ndarray, data: np.ndarray, slice_
     else:
         data2d = data[slice_index]
     return plot2D(axes_2d[0], axes_2d[1], data2d, show=show, opacity=opacity, xlabel=xlabel, ylabel=ylabel, title=title,
-                  xrange=xrange, yrange=yrange, dark_mode=dark_mode, colorscale=colorscale)
+                  xrange=xrange, yrange=yrange, dark_mode=dark_mode, colorscale=colorscale, renderer=renderer)
 
 
 def filepath_plot3D(filepath: str, month, year=2020, laser='lamp', cryo_temp='RT', scan_type='FS',
@@ -146,20 +146,22 @@ if __name__ == '__main__':
     from arpes_functions.arpes_dataclasses import Data3D, Data2D
     from misc_functions import multi_load
 
+    d = Data2D.single_load('April', '2021', light_source='XUV', filename='OMBE_XUV_2D0016_.ibw')
+    plot2D(d.xaxis, d.yaxis, d.data)
     # d = Data3D.single_load('October', cryo_temp='RT', scan_subtype='Calibrate')
     # plot3D(x=d.yaxis, y=d.xaxis, z=d.zaxis, data=np.moveaxis(d.data, 2, 1), slice_dim='z', slice_val=15,
     # int_range=0.02)
     # d.berend_data.show(mode='CE', val=15, Eint=0.02)
 
-    d = Data2D.single_load('December', year='2020', filename='UPS_20K0001_001.ibw')
-    plot2D(d.xaxis, d.yaxis-16.8, d.data)
-    d = Data2D.single_load(month='January', year='2021', light_source='XUV', scan_number=4)
-    plot2D(d.xaxis, d.yaxis, d.data)
-
-    raster = Data2D.single_load('October', year='2020', cryo_temp='RT', scan_number=15, filename='Raster0015_015.ibw')
-    E_f = 16.8
-    plot2D(raster.yaxis, raster.xaxis - E_f, raster.data, opacity=0.7, xrange=(-20, 17))
-
-    rasters = multi_load(i for i in range(10, 14))
-    heatmaps = multi_heatmaps(rasters, E_f=16.8, opacity=0.5)
-    multi_plot2D(heatmaps, title='Test')
+    # d = Data2D.single_load('December', year='2020', filename='UPS_20K0001_001.ibw')
+    # plot2D(d.xaxis, d.yaxis-16.8, d.data)
+    # d = Data2D.single_load(month='January', year='2021', light_source='XUV', scan_number=4)
+    # plot2D(d.xaxis, d.yaxis, d.data)
+    #
+    # raster = Data2D.single_load('October', year='2020', cryo_temp='RT', scan_number=15, filename='Raster0015_015.ibw')
+    # E_f = 16.8
+    # plot2D(raster.yaxis, raster.xaxis - E_f, raster.data, opacity=0.7, xrange=(-20, 17))
+    #
+    # rasters = multi_load(i for i in range(10, 14))
+    # heatmaps = multi_heatmaps(rasters, E_f=16.8, opacity=0.5)
+    # multi_plot2D(heatmaps, title='Test')
