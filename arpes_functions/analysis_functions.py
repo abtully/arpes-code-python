@@ -4,7 +4,7 @@ General analysis functions
 @date: November 2020
 """
 
-from misc_functions import get_data_index
+from .misc_functions import get_data_index
 import numpy as np
 
 

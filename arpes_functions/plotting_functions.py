@@ -13,7 +13,7 @@ from typing import List, Optional
 import numpy as np
 import copy
 import matplotlib.pyplot as plt
-from analysis_functions import get_2Dslice
+from .analysis_functions import get_2Dslice
 
 DEFAULT_RENDERER = 'browser'  # this is a constant of this file
 
