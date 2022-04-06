@@ -34,7 +34,8 @@ class Components(PageInteractiveComponents):
                                         placeholder='filename (.tiff)', persistence=True)
         self.ref_table = c.table(id_name='tab-ref', editable=True)
         self.dat_table = c.table(id_name='tab-dat', editable=True)
-        self.tog_ref = c.toggle(id_name='tog-ref', label='Reference Image')
+        # self.tog_ref = c.toggle(id_name='tog-ref', label='Reference Image')
+        self.tog_ref = c.toggle(id_name='tog-ref')
         self.txt_printout = html.P(id='txt-printout')
 
         # main area components
@@ -293,6 +294,7 @@ class LeedFigureCallbacks(CommonInputCallbacks):  # useful for figure that uses 
         # full_fp = get_filepath(self.path, self.name)
         data = load_image(self.name, self.path)
         fig = show_image(data, show=False)
+        fig.update_layout(height=1000)
         return fig
 
 

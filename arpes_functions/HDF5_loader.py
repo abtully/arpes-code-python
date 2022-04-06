@@ -40,6 +40,21 @@ def data_from_hdf(fp: str, dataname: str):  # returns 4 ndarrays
     return data, ss, cs, p
 
 
+def data_from_hdf_2022(fp: str, dataname: str):  # returns 4 ndarrays
+    p = array_from_hdf(os.path.join(fp, dataname), 'entry1/ScanValues').squeeze()  # ky (phi motor slices -- 102 steps, typically)
+    ss = array_from_hdf(os.path.join(fp, dataname), 'angles')[:, 0]  # theta (kx)
+    cs = array_from_hdf(os.path.join(fp, dataname), 'energies')[:, 0]  # energy
+    data = array_from_hdf(os.path.join(fp, dataname), 'data')
+    return data, ss, cs, p
+
+
+def data_from_hdf_2D_2022(fp: str, dataname: str):  # returns 4 ndarrays
+    ss = array_from_hdf(os.path.join(fp, dataname), 'angles').squeeze()  # theta (kx)
+    cs = array_from_hdf(os.path.join(fp, dataname), 'energies').squeeze()  # energy
+    data = array_from_hdf(os.path.join(fp, dataname), 'data').squeeze()
+    return data, ss, cs
+
+
 def avg_data_hdf(fp: str, fn: str, data_avg: np.ndarray, p: np.ndarray, slice_scale: np.ndarray,
                  channel_scale: np.ndarray):
     filepath = os.path.join(fp, f'{fn}.h5')

@@ -32,7 +32,7 @@ def plot2D(x: np.ndarray, y: np.ndarray, data: np.ndarray, show=True, opacity=No
     fig = go.Figure()
     if E_f is not None and E_f != '':
         y = y - float(E_f)
-        ylabel = 'E - E_f'
+        ylabel = 'E - EF (eV)'
     hm = heatmap(x, y, data, opacity=opacity)
     fig.add_trace(hm)
     fig.update_layout(dict(xaxis_title=xlabel, yaxis_title=ylabel, title=title), coloraxis=dict(colorscale=colorscale))
@@ -47,26 +47,35 @@ def plot2D(x: np.ndarray, y: np.ndarray, data: np.ndarray, show=True, opacity=No
     return fig
 
 
-def plot2D_jupyter(x: np.ndarray, y: np.ndarray, data: np.ndarray, width=500, height=500, figtitle=False):
+def plot2D_jupyter(x: np.ndarray, y: np.ndarray, data: np.ndarray, width=500, height=500,
+                   title=False, ylabel=False, xlabel=False):
     """
     Calls 2D plotting function in jupyter-friendly style
 
     Returns: Plotly figure
     """
-    if not figtitle:
-        figtitle = 'kx vs Energy'
-    return plot2D(x=x, y=y, data=data, renderer='jupyterlab', show=False, xlabel='kx', ylabel='Energy',
-                  title=figtitle).update_layout(autosize=False, width=width, height=height)
+    if not title:
+        title = 'kx vs Energy'
+    if not ylabel:
+        ylabel = 'Energy'
+    if not xlabel:
+        xlabel = 'kx'
+    return plot2D(x=x, y=y, data=data, renderer='jupyterlab', show=False, xlabel=xlabel, ylabel=ylabel,
+                  title=title).update_layout(autosize=False, width=width, height=height)
 
 
-def plot_2D_mpl(x: np.ndarray, y: np.ndarray, data: np.ndarray, title=None, xlabel=None, ylabel=None):
+def plot_2D_mpl(x: np.ndarray, y: np.ndarray, data: np.ndarray, title=None, xlabel=None, ylabel=None, EF=None):
     """
     Plots 2D matplotlib figure
 
     Returns: mpl fig, ax
 
     """
-    xx, yy = np.meshgrid(x, y)
+    # xx, yy = np.meshgrid(x, y)
+    if EF:
+        y = y - EF
+        if ylabel is None:
+            ylabel = 'E - EF (eV)'
     fig, ax = plt.subplots(1)
     ax.pcolormesh(x, y, data, shading='auto')
     if title is None:
@@ -120,7 +129,7 @@ def show_kpts(fig, material='C60', ticks=True, tickangle=0, vlines=False):
     return fig
 
 
-def show_kpts_mpl(fig, ax, material='C60', tickangle=0, vlines=False, color='black'):
+def show_kpts_mpl(fig, ax, material='C60', tickangle=0, vlines=False, color='black', title=None):
     """
     Plots mpl figure with x-xaxis replaced by k high symmetry points for C60 or Au(111) (expects k-corrected data).
     Note that choosing C60/Au(111) will plot C60 HS points in black and Au HS points in red (if color is left default).
@@ -131,6 +140,7 @@ def show_kpts_mpl(fig, ax, material='C60', tickangle=0, vlines=False, color='bla
         tickangle: 0, 30, 45, 90, etc.
         vlines: adds dashed vertical lines at HS points
         color: specifies color of vertical lines
+        title: can specify title of plot (otherwise reverts to default)
 
     Returns: mpl figure
 
@@ -155,9 +165,12 @@ def show_kpts_mpl(fig, ax, material='C60', tickangle=0, vlines=False, color='bla
     ax.set_xticklabels(text, rotation=tickangle, color=color)
     if material == 'C60/Au(111)':
         [x2.set_color('red') for x2 in ax.get_xticklabels()[-4:]]
-    if vlines == True:
+    if vlines is True:
         [ax.axvline(x=val, ymin=0, ymax=1, linestyle='dashed', color=color, linewidth=1) for val in vals]
-    ax.set_title(label=f'{material} Band Structure')
+    if title is None:
+        ax.set_title(label=f'{material} Band Structure')
+    elif title:
+        ax.set_title(label=title)
     return fig
 
 
@@ -254,7 +267,7 @@ def plot3D_jupyter(x, y, z, data, slice_dim, slice_val, int_range, width=500, he
                   title=figtitle).update_layout(autosize=False, width=width, height=height)
 
 
-def plot_3D_mpl(x, y, z, data, slice_dim, slice_val, int_range):
+def plot_3D_mpl(x, y, z, data, slice_dim, slice_val, int_range, title=None):
     """
     Plots 2D slice of 3D data in matplotlib
 
@@ -263,19 +276,23 @@ def plot_3D_mpl(x, y, z, data, slice_dim, slice_val, int_range):
     """
     xaxis, yaxis, dataslice = get_2Dslice(x, y, z, data, slice_dim, slice_val, int_range)
     if slice_dim == 'y':
-        title = f'Constant Energy {slice_val}eV (int range {int_range})'
+        new_title = f'Constant Energy {slice_val}eV (int range {int_range})'
         ylabel = 'ky'
         xlabel = 'kx'
     elif slice_dim == 'z':
-        title = f'Constant phi = {slice_val} (int range {int_range})'
+        new_title = f'Constant phi = {slice_val} (int range {int_range})'
         ylabel = 'Energy'
         xlabel = 'kx'
     elif slice_dim == 'x':
-        title = f'Constant theta = {slice_val} (int range {int_range})'
+        new_title = f'Constant theta = {slice_val} (int range {int_range})'
         xlabel = 'ky'
         ylabel = 'Energy'
     else:
         raise ValueError(f'Slice dimension not x, y, or z: f{slice_dim}')
+    if title:
+        title = title
+    else:
+        title = new_title
     return plot_2D_mpl(xaxis, yaxis, dataslice, title=title, ylabel=ylabel, xlabel=xlabel)
 
 

@@ -9,6 +9,7 @@ Generates and plots polygons
 from typing import List, Tuple
 import numpy as np
 import plotly.graph_objects as go
+import matplotlib.pyplot as plt
 
 DEFAULT_RENDERER = 'browser'  # this is a constant of this file
 
@@ -162,6 +163,60 @@ def plot_polygons(coords: List[List[Tuple]], color: str = None, darkmode=False, 
         fig.update_layout(template='plotly_dark')
     if show:
         fig.show(renderer=DEFAULT_RENDERER)
+    return fig
+
+
+def plot_polygons_mpl(fig=None, ax=None, color='black', material='C60', nsides=6, multiple=False, radius=False, rotation=30, translation=(0, 0), title=None):
+    # if type(coords) == list:
+    if fig is None:
+        fig, ax = plt.subplots(1)
+    if not radius:
+        if material == 'C60':
+            radius = 0.42
+        elif material == 'Au(111)':
+            radius = 1.1
+        else:
+            raise ValueError(f'Material {material} not C60 or Au(111), must specify radius argument.')
+    coords = gen_polygon(nsides, radius=radius, rotation=rotation, translation=translation)
+    if multiple:
+        coords, coords_bl, coords_tr, coords_l, coords_tl, coords_r = gen_tiled_hexagons(coords, radius=radius, rotation=rotation, translation=translation)
+        new_coords = [coords, coords_bl, coords_tr, coords_l, coords_tl, coords_r]
+#         new_coords = [coords, coords_bl, coords_tr, coords_l, coords_r]
+        plt_polygons(new_coords, fig=fig, ax=ax, color=color, title=title)
+    if not multiple:
+        plt_polygon(coords, fig=fig, ax=ax, color=color, title=title)
+    return fig
+
+
+def plt_polygon(coords, fig=None, ax=None, color='black', title=None):
+    if fig is None:
+        fig, ax = plt.subplots(1)
+    endpoint = coords[0]
+    coords = coords + [endpoint]
+    x = [c[0] for c in coords]
+    y = [c[1] for c in coords]
+    ax.plot(x, y, color=color)
+    if title is None:
+        ax.set_title(label=f'BZ Overlay')
+    return fig
+
+
+def plt_polygons(coords, fig=None, ax=None, color='black', title=None):
+    if ax:
+        xlim = ax.get_xlim()
+        ylim = ax.get_ylim()
+    if fig is None:
+        fig, ax = plt.subplots(1)
+    for i in coords:
+        endpoint = i[0]
+        i = i + [endpoint]
+        x = [c[0] for c in i]
+        y = [c[1] for c in i]
+        ax.plot(x, y, color=color)
+        ax.set_xlim(xlim[0], xlim[1])
+        ax.set_ylim(ylim[0], ylim[1])
+    if title is None:
+        ax.set_title(label=f'BZ Overlay')
     return fig
 
 
