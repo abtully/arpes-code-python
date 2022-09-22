@@ -7,6 +7,7 @@ HDF5 file loader (required for phi_motor ARPES data)
 import h5py
 import os
 import numpy as np
+from igor.binarywave import load
 
 
 def array_from_hdf(fp_complete: str, dataname: str) -> np.ndarray:
@@ -63,6 +64,61 @@ def avg_data_hdf(fp: str, fn: str, data_avg: np.ndarray, p: np.ndarray, slice_sc
         hdf['p'] = p
         hdf['slice_scale'] = slice_scale
         hdf['channel_scale'] = channel_scale
+
+
+def ibw_to_hdf5(fp, fn, h5file='test.h5', export=False):
+    """Loads .ibw file, converts to h5. h5file is string --> desired filename + location"""
+    w = load(os.path.join(fp, fn))
+    data = w['wave']['wData']
+    # print(w)  # To see the full contents of the igorwave (it is a dictionary of information)
+
+    # Axis info is saved as start value and delta value only (e.g. np.arange(100)*sfA+sfB to get 100 values starting at sfB and
+    # stepping by sfA)
+    axis_delta = w['wave']['wave_header']['sfA']  # Each of these has 4 values (for the 4 possible dims of Igor waves)
+    axis_start = w['wave']['wave_header']['sfB']  # ""
+    axis_shape = w['wave']['wave_header']['nDim']
+
+    axes = []
+    for delta, start, shape in zip(axis_delta, axis_start, axis_shape):
+        if shape > 0:  # Ignore unused axes
+            axis = np.arange(shape) * delta + start
+            axes.append(axis)
+
+    # printing first few values from each so you can figure out which is which
+    for axis in axes:
+        print(axis[:10])
+
+    axes_names = ['theta', 'energy', 'phi']  # Change these to match your axes labels
+
+    if export is True:
+        fn = fn if h5file == 'test.h5' else h5file
+        h5file = os.path.join(fp, fn.split('.')[0]+'.h5')
+    with h5py.File(h5file,
+                   'w') as f:  # Note: 'w' creates a new empty file (or overwrites), use 'r+' to modify an existing file
+        f['data'] = data
+        for axis, name in zip(axes, axes_names):
+            f[name] = axis
+
+
+def load_hdf5(fp, fn=None):
+    """Loads HDF5 file and returns the following numpy arrays: data, theta axis, phi axis, energy axis"""
+    if fn is not None:
+        filepath = os.path.join(fp, fn)
+    else:
+        filepath = fp
+    with h5py.File(filepath, 'r') as f:  # Read only
+        loaded_data = f['data'][
+                      :]  # [:] to convert h5py.Dataset to numpy array (otherwise it dissapears outside of the with statement)
+        #     loaded_axes = [f[key][:] for key in axes_names]
+        axes_names = ['theta', 'energy', 'phi']  # Change these to match your axes labels
+        axes_dict = {key: f[key] for key in axes_names if key in f.keys()}
+        energy_ax = f['energy'][:]
+        theta_ax = f['theta'][:]
+        phi_ax = f['phi'][:] if 'phi' in f.keys() else None
+    if phi_ax is not None:
+        return loaded_data.T, theta_ax, phi_ax, energy_ax
+    if not phi_ax:
+        return loaded_data.T, theta_ax, energy_ax
 
 
 if __name__ == '__main__':

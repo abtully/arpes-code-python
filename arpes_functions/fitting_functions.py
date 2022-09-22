@@ -200,7 +200,9 @@ def make_n_lorentzians(num, amplitudes: Union[list, float], centers: list, sigma
 def fit_lorentzian_data(x: np.ndarray, data: np.ndarray,
                         num_peaks: int,
                         amplitudes: Union[list, float], centers: list, sigmas: Union[list, float] = None,
-                        offset_type: Optional[str] = 'linear', a: float = None, b: float = None, c: float = None) \
+                        offset_type: Optional[str] = 'linear', a: float = None, b: float = None, c: float = None,
+                        method: str = 'leastsq',
+                        params = None) \
         -> lm.model.ModelResult:
     """
 
@@ -215,6 +217,7 @@ def fit_lorentzian_data(x: np.ndarray, data: np.ndarray,
         a: quadratic coefficient (ax^2 + bx + c)
         b: linear coefficient
         c: constant coefficient
+        method: minimization methosd (e.g. leastsq, powell, etc.)
 
     Returns:
         lmfit model result
@@ -236,7 +239,7 @@ def fit_lorentzian_data(x: np.ndarray, data: np.ndarray,
     else:
         model = lorentzians
 
-    fit = model.fit(data.astype(np.float32), x=x.astype(np.float32))
+    fit = model.fit(data.astype(np.float32), x=x.astype(np.float32), method=method, params=params)
 
     return fit
 

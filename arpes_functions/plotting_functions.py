@@ -57,14 +57,15 @@ def plot2D_jupyter(x: np.ndarray, y: np.ndarray, data: np.ndarray, width=500, he
     if not title:
         title = 'kx vs Energy'
     if not ylabel:
-        ylabel = 'Energy'
+        ylabel = 'Energy (eV)'
     if not xlabel:
-        xlabel = 'kx'
+        xlabel = 'kx (A-1)'
     return plot2D(x=x, y=y, data=data, renderer='jupyterlab', show=False, xlabel=xlabel, ylabel=ylabel,
                   title=title).update_layout(autosize=False, width=width, height=height)
 
 
-def plot_2D_mpl(x: np.ndarray, y: np.ndarray, data: np.ndarray, title=None, xlabel=None, ylabel=None, EF=None):
+def plot_2D_mpl(x: np.ndarray, y: np.ndarray, data: np.ndarray, title=None, xlabel=None, ylabel=None, EF=None,
+                cmap=None, vmin=None, vmax=None, norm=None, colorbar=False, swap_axes=False):
     """
     Plots 2D matplotlib figure
 
@@ -72,22 +73,28 @@ def plot_2D_mpl(x: np.ndarray, y: np.ndarray, data: np.ndarray, title=None, xlab
 
     """
     # xx, yy = np.meshgrid(x, y)
+    fig, ax = plt.subplots(1)
+    if swap_axes:
+        x, y = y, x
+        # xlabel, ylabel = ylabel, xlabel
+        data = data.T
     if EF:
         y = y - EF
         if ylabel is None:
             ylabel = 'E - EF (eV)'
-    fig, ax = plt.subplots(1)
-    ax.pcolormesh(x, y, data, shading='auto')
+    pc = ax.pcolormesh(x, y, data, shading='auto', cmap=cmap, vmin=vmin, vmax=vmax, norm=norm)
+    if colorbar is True:
+        fig.colorbar(pc, ax=ax, extend='max')
     if title is None:
         ax.set_title(label='kx vs Energy')
     else:
         ax.set_title(label=title)
     if xlabel is None:
-        ax.set_xlabel(xlabel='kx')
+        ax.set_xlabel(xlabel='kx (A-1)')
     else:
         ax.set_xlabel(xlabel=xlabel)
     if ylabel is None:
-        ax.set_ylabel(ylabel='Energy')
+        ax.set_ylabel(ylabel='Energy (eV)')
     else:
         ax.set_ylabel(ylabel=ylabel)
     return fig, ax
@@ -257,9 +264,9 @@ def plot3D_jupyter(x, y, z, data, slice_dim, slice_val, int_range, width=500, he
     Returns: Plotly figure
     """
     if slice_dim == 'y':
-        yaxis = 'ky'
+        yaxis = 'ky (A-1)'
     elif slice_dim == 'z':
-        yaxis = 'Energy'
+        yaxis = 'Energy (eV)'
     if figtitle is False:
         figtitle = f'kx vs {yaxis}'
     return plot3D(x=x, y=y, z=z, data=data, slice_dim=slice_dim, slice_val=slice_val, int_range=int_range,
@@ -267,7 +274,7 @@ def plot3D_jupyter(x, y, z, data, slice_dim, slice_val, int_range, width=500, he
                   title=figtitle).update_layout(autosize=False, width=width, height=height)
 
 
-def plot_3D_mpl(x, y, z, data, slice_dim, slice_val, int_range, title=None):
+def plot_3D_mpl(x, y, z, data, slice_dim, slice_val, int_range, title=None, swap_axes=False, cmap=None):
     """
     Plots 2D slice of 3D data in matplotlib
 
@@ -277,23 +284,27 @@ def plot_3D_mpl(x, y, z, data, slice_dim, slice_val, int_range, title=None):
     xaxis, yaxis, dataslice = get_2Dslice(x, y, z, data, slice_dim, slice_val, int_range)
     if slice_dim == 'y':
         new_title = f'Constant Energy {slice_val}eV (int range {int_range})'
-        ylabel = 'ky'
-        xlabel = 'kx'
+        ylabel = 'ky (A-1)'
+        xlabel = 'kx (A-1)'
     elif slice_dim == 'z':
         new_title = f'Constant phi = {slice_val} (int range {int_range})'
-        ylabel = 'Energy'
-        xlabel = 'kx'
+        ylabel = 'Energy (eV)'
+        xlabel = 'kx (A-1)'
     elif slice_dim == 'x':
         new_title = f'Constant theta = {slice_val} (int range {int_range})'
-        xlabel = 'ky'
-        ylabel = 'Energy'
+        xlabel = 'ky (A-1)'
+        ylabel = 'Energy (eV)'
     else:
         raise ValueError(f'Slice dimension not x, y, or z: f{slice_dim}')
     if title:
         title = title
     else:
         title = new_title
-    return plot_2D_mpl(xaxis, yaxis, dataslice, title=title, ylabel=ylabel, xlabel=xlabel)
+    if swap_axes:
+        xaxis, yaxis = yaxis, xaxis
+        # xlabel, ylabel = ylabel, xlabel
+        dataslice = dataslice.T
+    return plot_2D_mpl(xaxis, yaxis, dataslice, title=title, ylabel=ylabel, xlabel=xlabel, cmap=cmap)
 
 
 def filepath_plot3D(filepath: str, month, year=2020, laser='lamp', cryo_temp='RT', scan_type='FS',

@@ -103,6 +103,15 @@ class Data3D(BaseData):
         data_path = os.path.join(fp, filename)
         return cls(data_path, light_source, cryo_temp, filename)
 
+    @classmethod
+    # def single_load(cls, month, year=2020, laser='lamp', cryo_temp='RT', scan_type='FS', scan_subtype=None,
+    #                 scan_number=1, filename=None, filepath=Path):
+    def single_load_2022(cls, filepath, filename, light_source='XUV', cryo_temp='LT'):
+        # if scan_subtype is None:
+        #     raise ValueError(f'No scan subtype filename provided')
+        fp = os.path.join(filepath, filename)
+        return cls(fp, light_source, cryo_temp, filename)
+
     @staticmethod  # normal function but only associated with Data3D class
     # def _get_filename(cryo_temp, scan_type, scan_subtype, scan_number):
     #     if scan_type == 'FS':
