@@ -17,6 +17,68 @@ from .analysis_functions import get_2Dslice
 
 DEFAULT_RENDERER = 'browser'  # this is a constant of this file
 
+"""Formatting Functions"""
+
+
+def format_FS_plot(fig, ax, slice_val=None, xlabel='kx (A-1)', ylabel='ky (A-1)', title=None, EF=None,
+                   xticks=np.arange(-0.6, 0.52, 0.3), yticks=np.arange(-1.2, 0.2, 0.4), set_aspect_ratio=True,
+                   aspect_ratio=1.0, fontsize_ticks=14, fontsize_labels=16, fontsize_title=18):
+    if title and EF is None:
+        raise ValueError(f'Title = {title} and EF = {EF}. Must specify one.')
+    plt.xticks(xticks, fontsize=fontsize_ticks)
+    ax.set_xlabel(xlabel=xlabel, fontsize=fontsize_labels)
+    plt.yticks(yticks, fontsize=fontsize_ticks)
+    ax.set_ylabel(ylabel=ylabel, fontsize=fontsize_labels)
+    if title is not None:
+        ax.set_title(f'{title}', fontsize=fontsize_title)
+    elif title is None:
+        if EF is not None:
+            EF = float(EF)
+            ax.set_title(f'{np.round((-EF + slice_val), 2)} eV', fontsize=fontsize_title)
+
+    if set_aspect_ratio:
+        ratio = aspect_ratio  # set aspect ratio
+        x_left, x_right = ax.get_xlim()
+        y_low, y_high = ax.get_ylim()
+        ax.set_aspect(abs((x_right - x_left) / (y_low - y_high)) * ratio)
+
+
+def format_HS_plot(fig, ax, slice_constant, slice_val, ylabel='E - EF (eV)', title=None, EF=None, xticks=None,
+                   yticks=np.arange(-0.6, 0.2, 0.2), set_aspect_ratio=True, aspect_ratio=1.0, fontsize_ticks=14,
+                   fontsize_labels=16, fontsize_title=18):
+    if title and slice_val is None:
+        raise ValueError(f'Title = {title} and slice_val = {slice_val}. Must specify one.')
+    if slice_constant == 'kx':
+        xlabel = 'ky (A-1)'
+        if title is None:
+            title = f'kx={slice_val}'
+    if slice_constant == 'ky':
+        xlabel = 'kx (A-1)'
+        if title is None:
+            title = f'ky={slice_val}'
+    if xticks is None:
+        plt.xticks(fontsize=fontsize_ticks)
+    else:
+        plt.xticks(xticks, fontsize=fontsize_ticks)
+    ax.set_xlabel(xlabel=xlabel, fontsize=fontsize_labels)
+    if yticks is None:
+        plt.yticks(fontsize=fontsize_ticks)
+    else:
+        plt.yticks(yticks, fontsize=fontsize_ticks)
+    ax.set_ylabel(ylabel=ylabel, fontsize=fontsize_labels)
+    if EF is not None:
+        EF = float(EF)
+        ax.set_title(f'{np.round((-EF + slice_val), 2)} eV', fontsize=fontsize_title)
+    if title is not None:
+        ax.set_title(f'{title}', fontsize=fontsize_title)
+
+    if set_aspect_ratio:
+        ratio = aspect_ratio  # set aspect ratio
+        x_left, x_right = ax.get_xlim()
+        y_low, y_high = ax.get_ylim()
+        ax.set_aspect(abs((x_right - x_left) / (y_low - y_high)) * ratio)
+
+
 """Plotting Functions 2D"""
 
 

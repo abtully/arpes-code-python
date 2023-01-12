@@ -152,3 +152,18 @@ def get_2Dslice(x: np.ndarray, y: np.ndarray, z: np.ndarray, data: np.ndarray, s
     else:
         data2d = data[slice_index]
     return axes_2d[0], axes_2d[1], data2d
+
+
+def norm_data(data):
+    data = data - np.nanmin(data)
+    return 1/np.max(data) * data
+
+
+def limit_dataset(x, y, data, xlim, ylim, EF=None):
+    if EF is not None:
+        ylim = (ylim[0]+EF, ylim[1]+EF)
+    data = data[np.logical_and(y >= ylim[0], y <= ylim[1])]
+    data = data[:, np.logical_and(x >= xlim[0], x <= xlim[1])]
+    y = y[np.logical_and(y >= ylim[0], y <= ylim[1])]
+    x = x[np.logical_and(x >= xlim[0], x <= xlim[1])]
+    return x, y, data
