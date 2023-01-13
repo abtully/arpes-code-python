@@ -11,7 +11,7 @@ import lmfit as lm
 from typing import Union, Optional
 
 
-def offset_model(offset_type: str, a: float = None, b: float = None, c: float = None) -> lm.models.QuadraticModel:
+def offset_model(offset_type: str, a: float = None, b: float = None, c: float = None) -> Union[lm.models.QuadraticModel, lm.models.PolynomialModel]:
     """
 
     Args:
@@ -24,23 +24,33 @@ def offset_model(offset_type: str, a: float = None, b: float = None, c: float = 
         offset model to be added to lmfit model (e.g. model + offset_model)
 
     """
-    model = lm.models.QuadraticModel()
+    if offset_type in ('constant', 'linear', 'quadratic'):
+        model = lm.models.QuadraticModel()
 
-    model.set_param_hint('a', value=a)
-    model.set_param_hint('b', value=b)
-    model.set_param_hint('c', value=c)
+        model.set_param_hint('a', value=a)
+        model.set_param_hint('b', value=b)
+        model.set_param_hint('c', value=c)
 
-    if offset_type == 'quadratic':
-        pass
-    elif offset_type == 'linear':
-        model.set_param_hint('a', value=0, vary=False)  # not allowed to vary parameter 'a' while fitting
-    elif offset_type == 'constant':
-        model.set_param_hint('a', value=0, vary=False)
-        model.set_param_hint('b', value=0, vary=False)
+        if offset_type == 'quadratic':
+            pass
+        elif offset_type == 'linear':
+            model.set_param_hint('a', value=0, vary=False)  # not allowed to vary parameter 'a' while fitting
+        elif offset_type == 'constant':
+            model.set_param_hint('a', value=0, vary=False)
+            model.set_param_hint('b', value=0, vary=False)
+        return model
+    elif offset_type.startswith('degree='):
+        degree = int(offset_type[7:])
+        model = lm.models.PolynomialModel(degree=degree)
+        for i, v in enumerate([c, b, a]):  # Set the first three with initial values
+            if v is not None:
+                model.set_param_hint(f'c{i}', value=v)
+        if degree >= 3:
+            for i in range(3, degree+1):  # Set the rest to zero
+                model.set_param_hint(f'c{i}', value=0)
+        return model
     else:
-        raise ValueError(f'offset_type: {offset_type} is not quadratic, linear, or constant')
-
-    return model
+        raise ValueError(f'offset_type: {offset_type} is not quadratic, linear, constant, or degree=int')
 
 
 def make_line(num, a, b, pos_slope=True) -> lm.models.LinearModel:
@@ -238,6 +248,14 @@ def fit_lorentzian_data(x: np.ndarray, data: np.ndarray,
         model = lorentzians + offset
     else:
         model = lorentzians
+
+    if params is None:
+        params = model.make_params()
+    for p in params.keys():
+        if 'center' in p:
+            par = params[p]
+            par.min = np.nanmin(x)
+            par.max = np.nanmax(x)
 
     fit = model.fit(data.astype(np.float32), x=x.astype(np.float32), method=method, params=params)
 
