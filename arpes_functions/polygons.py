@@ -122,7 +122,7 @@ def gen_tiled_hexagons(coords: List[Tuple] = None, sides: int = 6, radius: float
 #     return a1_hexs, a2_hexs
 
 
-def plot_polygon(coords: List[Tuple], color: str = None, darkmode=False, fig=None, show=True) -> go.Figure:
+def plot_polygon(coords: List[Tuple], color: str = None, darkmode=False, fig=None, show=True, dash=False, dash_width=1) -> go.Figure:
     # if type(coords) == list:
     if fig is None:
         fig = go.Figure()
@@ -130,7 +130,10 @@ def plot_polygon(coords: List[Tuple], color: str = None, darkmode=False, fig=Non
     coords = coords + [endpoint]
     x = [c[0] for c in coords]
     y = [c[1] for c in coords]
-    fig.add_trace(go.Scatter(mode='lines', x=x, y=y, marker=dict(color=color)))
+    if dash:
+        fig.add_trace(go.Scatter(x=x, y=y, line=dict(color=color, width=dash_width, dash="dash")))
+    else:
+        fig.add_trace(go.Scatter(mode='lines', x=x, y=y, marker=dict(color=color)))
     if darkmode:
         fig.update_layout(template='plotly_dark')
     if show:

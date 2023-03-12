@@ -25,9 +25,11 @@ def format_FS_plot(fig, ax, slice_val=None, xlabel='kx (A-1)', ylabel='ky (A-1)'
                    aspect_ratio=1.0, fontsize_ticks=14, fontsize_labels=16, fontsize_title=18):
     if title and EF is None:
         raise ValueError(f'Title = {title} and EF = {EF}. Must specify one.')
-    plt.xticks(xticks, fontsize=fontsize_ticks)
+    if xticks is not None:
+        plt.xticks(xticks, fontsize=fontsize_ticks)
     ax.set_xlabel(xlabel=xlabel, fontsize=fontsize_labels)
-    plt.yticks(yticks, fontsize=fontsize_ticks)
+    if yticks is not None:
+        plt.yticks(yticks, fontsize=fontsize_ticks)
     ax.set_ylabel(ylabel=ylabel, fontsize=fontsize_labels)
     if title is not None:
         ax.set_title(f'{title}', fontsize=fontsize_title)

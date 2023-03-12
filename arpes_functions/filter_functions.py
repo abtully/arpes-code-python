@@ -10,6 +10,7 @@ from copy import deepcopy
 from PIL import Image, ImageEnhance
 import matplotlib.pyplot as plt
 import os
+import h5py
 
 from arpes_functions.plotting_functions import plot2D
 from arpes_functions.arpes_dataclasses import Data2D
@@ -25,6 +26,48 @@ def fourier_2d(data: np.ndarray, xaxis: np.ndarray, yaxis: np.ndarray):
     y_fft = 1 / dy * np.linspace(-0.5, 0.5, ly)
     dat_fft = 2 * np.abs(np.fft.fftshift(fft))
     return dat_fft, x_fft, y_fft
+
+
+def generate_FFT_filtered_dataset(
+    theta, energy, phi, data, fp, fn, int_range=0.0, overwrite=False, new_fn=None
+):
+    new_fn = (
+        new_fn
+        if new_fn
+        else f"{os.path.splitext(fn)[0]}_filteredFFT_{int_range:.2f}int.h5"
+    )
+    new_fn = os.path.join(fp, new_fn)
+    if not overwrite and os.path.exists(new_fn):
+        raise FileExistsError(f"{new_fn} already exists")
+    new_data = []
+    for p in phi:
+        val = p
+        xaxis, yaxis, dataslice = analysis_functions.get_2Dslice(
+            x=theta,
+            y=energy,
+            z=phi,
+            data=data,
+            slice_dim="z",
+            slice_val=val,
+            int_range=int_range,
+        )
+        fft_data = fft2d_mask(dataslice, plot=False)
+        new_data.append(fft_data)
+    new_data = np.array(new_data).T
+    with h5py.File(
+        new_fn, "w"
+    ) as f:  # Note: 'w' creates a new empty file (or overwrites), use 'r+' to modify an existing file
+        f["data"] = new_data
+        axes_names = [
+            "theta",
+            "energy",
+            "phi",
+        ]  # Change these to match your axes labels
+        axes = [theta, energy, phi]
+        for axis, name in zip(axes, axes_names):
+            f[name] = axis
+    return new_fn
+
 
 def fft2d_mask(Aa2D, MT='Zero', MS=[46,20], ER=[45,55], plot=True):
     '''

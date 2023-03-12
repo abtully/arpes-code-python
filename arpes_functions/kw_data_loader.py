@@ -12,7 +12,7 @@ import igor.binarywave
 def load2D_k(ddir, fn, summary=True):
     """
     Notes: When creating axes, use data.shape[1] for x because numpy reads right to left
-    (I tranposed data matrix before that).
+    (I tranzposed data matrix before that).
     """
     if fn[-4:] != '.ibw':
         raise ValueError(f'file is {fn[-4]}, function expects .ibw')
@@ -46,7 +46,7 @@ def load2D_k(ddir, fn, summary=True):
 
 def load3D_k(ddir, fn, summary=True):
     """
-    Notes: When creating axes, recall that numpy reads right to left (also, I tranpose data matrix before that).
+    Notes: When creating axes, recall that numpy reads right to left (also, I transpose data matrix before that).
     """
     if fn[-4:] != '.ibw':
         raise ValueError(f'file is {fn[-4]}, function expects .ibw')
