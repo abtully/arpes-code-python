@@ -14,7 +14,7 @@ import h5py
 
 from arpes_functions.plotting_functions import plot2D
 from arpes_functions.arpes_dataclasses import Data2D
-from arpes_functions.analysis_functions import get_data_region
+from arpes_functions.analysis_functions import get_data_region, get_2Dslice
 
 
 def fourier_2d(data: np.ndarray, xaxis: np.ndarray, yaxis: np.ndarray):
@@ -42,7 +42,7 @@ def generate_FFT_filtered_dataset(
     new_data = []
     for p in phi:
         val = p
-        xaxis, yaxis, dataslice = analysis_functions.get_2Dslice(
+        xaxis, yaxis, dataslice = get_2Dslice(
             x=theta,
             y=energy,
             z=phi,

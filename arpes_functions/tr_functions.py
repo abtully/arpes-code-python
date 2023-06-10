@@ -133,7 +133,7 @@ def default_fig():
     )
     fig.update_layout(
         newshape=dict(
-            line=dict(color="black", width=5, dash="solid"),
+            line=dict(color="black", width=8, dash="solid"),
             #             line_color="yellow",
             #             fillcolor="rgba(0,0,0,0.51)",
             #             opacity=1,
@@ -147,21 +147,21 @@ def default_fig():
 
 
 def thesis_fig(title="Title", xaxis_title="$x$", yaxis_title="$y$", dtick_x=None, dtick_y=None, colorscale="ice",
-               reversescale=True, showscale=True, width=600, height=600, equiv_axes=True, gridlines=True):
+               reversescale=True, showscale=True, width=900, height=600, equiv_axes=True, gridlines=True):
     fig = default_fig()
 
     fig.update_coloraxes(colorscale=colorscale, reversescale=reversescale, showscale=showscale)
 
     fig.update_layout(
         title=dict(
-            text=title, x=0.5, xanchor="center", yanchor="top", font_size=22
+            text=title, x=0.5, xanchor="center", yanchor="top", font_size=28
         ),
     )
     fig.update_xaxes(
-        title_text=xaxis_title, title_font=dict(size=20), tickfont_size=16, dtick=dtick_x,
+        title_text=xaxis_title, title_font=dict(size=24), tickfont_size=20, dtick=dtick_x,
     )
     fig.update_yaxes(
-        title_text=yaxis_title, title_font=dict(size=20), tickfont_size=16, dtick=dtick_y,
+        title_text=yaxis_title, title_font=dict(size=24), tickfont_size=20, dtick=dtick_y,
     )
     if equiv_axes:
         fig.update_yaxes(scaleanchor="x", scaleratio=1)
@@ -169,7 +169,7 @@ def thesis_fig(title="Title", xaxis_title="$x$", yaxis_title="$y$", dtick_x=None
         fig.update_yaxes(showgrid=False, zeroline=False)
         fig.update_xaxes(showgrid=False, zeroline=False)
     fig.update_layout(
-        width=width, height=height, margin=dict(l=100)
+        width=width, height=height, margin=dict(l=130, b=100)
     )  # margin=dict(b=0, t=30, l=20, r=0)
     return fig
 

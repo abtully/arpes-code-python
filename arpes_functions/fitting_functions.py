@@ -439,7 +439,7 @@ def make_gaussian(num, amplitude, center, sigma, include_exp_decay=False, gamma=
 
 
 def make_n_gaussians(num, amplitudes: Union[list, float], centers: list, sigmas: Union[list, float],
-                     include_exp_decay=False, gammas: Union[list, float] = None) -> lm.Model:
+                     include_exp_decay=False, gammas: Union[list, float] = None, lock_sigma=False) -> lm.Model:
     """
 
     Args:
@@ -472,7 +472,7 @@ def make_n_gaussians(num, amplitudes: Union[list, float], centers: list, sigmas:
 
             model = None
             for i, (amp, cent, sig, gamma) in enumerate(zip(amplitudes, centers, sigmas, gammas)):
-                this_model = make_gaussian(i, amp, cent, sig, include_exp_decay=True, gamma=gamma)
+                this_model = make_gaussian(i, amp, cent, sig, include_exp_decay=True, gamma=gamma, lock_sigma=lock_sigma)
                 if not model:
                     model = this_model
                 else:
@@ -501,7 +501,7 @@ def make_n_gaussians(num, amplitudes: Union[list, float], centers: list, sigmas:
 def fit_gaussian_data(x: np.ndarray, data: np.ndarray,
                         num_peaks: int,
                         amplitudes: Union[list, float], centers: list, sigmas: Union[list, float] = None,
-                        include_exp_decay = False, gammas: Union[list, float] = None,
+                        include_exp_decay = False, gammas: Union[list, float] = None, lock_sigma = False,
                         offset_type: Optional[str] = 'linear', a: float = None, b: float = None, c: float = None,
                         method: str = 'leastsq',
                         params = None) \
@@ -539,7 +539,8 @@ def fit_gaussian_data(x: np.ndarray, data: np.ndarray,
     if gammas is None:
         gammas = 0
 
-    gaussians = make_n_gaussians(num_peaks, amplitudes, centers, sigmas, include_exp_decay, gammas)
+    gaussians = make_n_gaussians(num_peaks, amplitudes, centers, sigmas, include_exp_decay, gammas,
+                                 lock_sigma=lock_sigma)
     if offset_type:
         offset = offset_model(offset_type, a, b, c)
         model = gaussians + offset
